@@ -11,6 +11,8 @@ composeBom = "2025.10.00"
 google-hilt-version = "2.57.2"
 hilt-navigation-compose = "1.3.0"
 google-ksp-version = "2.0.21-1.0.25"
+navigation-compose-version = "2.9.4"
+serialization-version = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +32,8 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 navigation-hilt-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "google-hilt-version" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "google-hilt-version" }
+navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref= "navigation-compose-version"}
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -37,4 +41,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-hilt = { id = "com.google.dagger.hilt.android", version.ref = "google-hilt-version" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp-version" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
