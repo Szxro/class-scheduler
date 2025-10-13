@@ -15,6 +15,7 @@ navigation-compose-version = "2.9.4"
 serialization-version = "1.6.3"
 googleServices = "4.4.2"
 firebaseBom = "33.7.0"
+material-icons-version = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
+material-icons-extended = {module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-version"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
