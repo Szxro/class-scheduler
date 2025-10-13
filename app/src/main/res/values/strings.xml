@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Class Scheduler</string>
+    <string name="email_input_placeholder">Email</string>
+    <string name="password_input_placeholder">Password</string>
+    <string name="sign_in_with_email">Sign In</string>
+    <string name="sign_up_text">Don\’t have an account yet? \n Click here to sign up</string>
+    <string name="generic_error">Something went wrong</string>
 </resources>
