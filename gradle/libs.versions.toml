@@ -13,6 +13,8 @@ hilt-navigation-compose = "1.3.0"
 google-ksp-version = "2.0.21-1.0.25"
 navigation-compose-version = "2.9.4"
 serialization-version = "1.6.3"
+googleServices = "4.4.2"
+firebaseBom = "33.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +36,9 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "googl
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "google-hilt-version" }
 navigation-compose = {module = "androidx.navigation:navigation-compose", version.ref= "navigation-compose-version"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-version"}
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -41,5 +46,6 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-hilt = { id = "com.google.dagger.hilt.android", version.ref = "google-hilt-version" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp-version" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
