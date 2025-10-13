@@ -11,7 +11,6 @@ plugins {
 android {
     namespace = "com.example.classscheduler"
     compileSdk = 36
-
     defaultConfig {
         applicationId = "com.example.classscheduler"
         minSdk = 24
