@@ -12,8 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.classscheduler.ui.home.HomeRoute
+import com.example.classscheduler.ui.home.HomeScreen
 import com.example.classscheduler.ui.signin.SignInRoute
 import com.example.classscheduler.ui.signin.SignInScreen
+import com.example.classscheduler.ui.signup.SignUpRoute
+import com.example.classscheduler.ui.signup.SignUpScreen
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,13 +31,33 @@ class MainActivity : ComponentActivity() {
             ClassSchedulerTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()) { innerPadding ->
-
                     NavHost(navController, startDestination = SignInRoute, modifier = Modifier.padding(innerPadding)){
                         composable<SignInRoute>{
                             SignInScreen(
-                                openHomeScreen = {},
-                                openSignUpScreen = {}
+                                openHomeScreen = {
+                                    navController.navigate(HomeRoute){
+                                        popUpTo(SignInRoute){
+                                            inclusive = true; // Remove the SignInRoute from the stack
+                                        }
+                                        launchSingleTop = true; // Avoid multiple instances of the same screen
+                                    };
+                                },
+                                openSignUpScreen = {
+                                    navController.navigate(SignUpRoute){
+                                        launchSingleTop = true;
+                                    };
+                                }
                             )
+                        }
+                        composable<SignUpRoute>{
+                            SignUpScreen(
+
+                            );
+                        }
+                        composable<HomeRoute>{
+                            HomeScreen(
+
+                            );
                         }
                     }
                 }
