@@ -1,8 +1,31 @@
 <resources>
+    <!--App Name-->
     <string name="app_name">Class Scheduler</string>
-    <string name="email_input_placeholder">Email</string>
-    <string name="password_input_placeholder">Password</string>
+
     <string name="sign_in_with_email">Sign In</string>
     <string name="sign_up_text">Don\’t have an account yet? \n Click here to sign up</string>
-    <string name="generic_error">Something went wrong</string>
+
+    <!--Email Input-->
+    <string name="email_input_placeholder">Email</string>
+
+    <!--Password Input-->
+    <string name="password_input_placeholder">Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+
+    <!--Exception descriptions-->
+    <string name="generic_exception">Something went wrong</string>
+    <string name="user_not_found_exception">User account not found. Please verify your credentials.</string>
+    <string name="invalid_user_credentials_exception">The email or password are incorrect. Please verify your credentials</string>
+    <string name="too_many_request_exception">Too many attempts. Please try again later</string>
+
+    <!-- Email Errors -->
+    <string name="invalid_email_error">The email is invalid</string>
+    <string name="blank_email_error">The email can\'t be blank</string>
+
+    <!--Password Errors-->
+    <string name="blank_password_error">The password can\'t be blank</string>
+    <string name="invalid_password_length_error">The password must contain at least %d characters long</string>
+    <string name="invalid_password_error">The password must contain at least one uppercase letter, one lowercase letter, one number, no spaces, and be at least 8 characters long</string>
+
 </resources>
