@@ -12,24 +12,31 @@ import androidx.compose.ui.Modifier;
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 
 @Serializable
-object HomeRoute
+data class HomeRoute(
+    val email: String
+);
 
 @Composable
 fun HomeScreen(
+    email: String,
     modifier: Modifier = Modifier
 ):Unit{
-    HomeScreenContent(modifier);
+    HomeScreenContent(
+        email,
+        modifier
+    );
 }
 
 @Composable
 private fun HomeScreenContent(
+    email: String,
     modifier: Modifier = Modifier
 ):Unit{
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
-        Text("Home Screen");
+        Text("Hello $email to the home screen");
     }
 }
 
@@ -37,6 +44,8 @@ private fun HomeScreenContent(
 @Composable
 private fun HomeScreenPreview():Unit{
     ClassSchedulerTheme(darkTheme = true){
-        HomeScreenContent();
+        HomeScreenContent(
+            email = "",
+        );
     }
 }
