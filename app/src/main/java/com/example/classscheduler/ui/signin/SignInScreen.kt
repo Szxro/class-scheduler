@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -24,12 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,51 +40,68 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import kotlinx.serialization.Serializable
 import com.example.classscheduler.R;
+import com.example.classscheduler.core.ui.UiEvent
+import com.example.classscheduler.core.ui.UiText
+import com.example.classscheduler.core.utils.ext.ObserveEventsAs
+import com.example.classscheduler.domain.models.User
 import com.example.classscheduler.ui.theme.DarkBlue
 
 @Serializable
 object SignInRoute
 
+// TODO: SEE A TUTORIAL ABOUT LOGIN WITH FIREBASE TO IMPROVE THE CURRENT IMPLEMENTATION
+// TODO: MAKE REUSABLE COMPONENTS (TEXT FIELD INPUTS)
+
 @Composable
 fun SignInScreen(
-    openHomeScreen: () -> Unit,
+    openHomeScreen: (user: User) -> Unit,
     openSignUpScreen : () -> Unit,
+    showErrorSnackBar: (UiText) -> Unit,
     modifier: Modifier = Modifier,
     signInViewModel: SignInViewModel = hiltViewModel(),
 ):Unit{
-    var email by rememberSaveable { mutableStateOf("") };
+    val state by signInViewModel.state.collectAsStateWithLifecycle();
 
-    var password by rememberSaveable { mutableStateOf("") };
+    signInViewModel.events.ObserveEventsAs { event ->
+        when(event){
+            is UiEvent.Navigate-> {
+                event.args?.let { user ->
+                    openHomeScreen(user as User);
+                }
+            }
+            is UiEvent.ShowSnackBar -> showErrorSnackBar(event.message)
+        }
+    }
 
     SignInScreenContent(
-        email,
-        password,
-        onEmailChange = { email = it},
-        onPasswordChange = { password = it },
-        openHomeScreen,
-        openSignUpScreen,
-        modifier,
+        state,
+        onEmailChange = { email -> signInViewModel.onIntent(SignInIntent.OnEmailChange(email))},
+        onPasswordChange = { password -> signInViewModel.onIntent(SignInIntent.OnPasswordChange(password))},
+        onPasswordVisibilityChange = { signInViewModel.onIntent(SignInIntent.OnPasswordVisibilityChange) },
+        onSignUpButtonClicked = { signInViewModel.onIntent(SignInIntent.OnSignUp(openSignUpScreen))},
+        onSignInButtonClicked = { signInViewModel.onIntent(SignInIntent.OnSignIn) },
+        modifier
     )
 }
 
 @Composable
 private fun SignInScreenContent(
-    email: String,
-    password: String,
+    state: SignInState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    openHomeScreen: () -> Unit,
-    openSignUpScreen: () -> Unit,
+    onPasswordVisibilityChange: () -> Unit,
+    onSignUpButtonClicked: () -> Unit,
+    onSignInButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ):Unit{
-    var isPasswordHidden by rememberSaveable { mutableStateOf(true) }
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ){
         Image(
            painter = painterResource(R.drawable.ic_scheduler_logo),
@@ -97,11 +114,19 @@ private fun SignInScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             singleLine = true,
-            value = email,
+            value = state.email,
             onValueChange = onEmailChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             placeholder = { Text(text = stringResource(R.string.email_input_placeholder))},
-            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_input_placeholder)) }
+            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_input_placeholder)) },
+            isError = state.emailError != null,
+            supportingText = {
+                if (state.emailError  != null){
+                    Text(
+                        text = state.emailError.asString()
+                    )
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp));
@@ -111,16 +136,16 @@ private fun SignInScreenContent(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             singleLine = true,
-            value = password,
+            value = state.password,
             onValueChange = onPasswordChange,
             placeholder = { Text(text = stringResource(R.string.password_input_placeholder))},
             leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = stringResource(R.string.password_input_placeholder)) },
             trailingIcon = {
-                IconButton(onClick = { isPasswordHidden = !isPasswordHidden}) {
+                IconButton(onClick = onPasswordVisibilityChange) {
                     val visibilityIcon =
-                        if (isPasswordHidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility;
+                        if (state.isPasswordHidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility;
 
-                    val description = if(isPasswordHidden) "Show password" else "Hide password";
+                    val description = if(state.isPasswordHidden) stringResource(R.string.show_password) else stringResource(R.string.hide_password)
                     Icon(
                         imageVector = visibilityIcon,
                         contentDescription = description
@@ -128,7 +153,15 @@ private fun SignInScreenContent(
                 }
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if(isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None
+            visualTransformation = if(state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+            isError = state.passwordError != null,
+            supportingText = {
+                if(state.passwordError != null){
+                    Text(
+                        text = state.passwordError.asString()
+                    )
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp));
@@ -137,24 +170,28 @@ private fun SignInScreenContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
-            onClick = openHomeScreen,
+            onClick = onSignInButtonClicked,
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = DarkBlue,
                 contentColor = Color.White
             ),
             border = BorderStroke(1.dp, DarkBlue)
         ) {
-            Text(
-                text = stringResource(R.string.sign_in_with_email),
-                fontSize = 16.sp,
-                modifier = Modifier.padding(vertical = 6.dp)
-            )
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(text = stringResource(R.string.sign_in_with_email), fontSize = 16.sp)
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp));
 
         TextButton(
-            onClick = openSignUpScreen
+            onClick = onSignUpButtonClicked
         ) {
             Text(
                 text = stringResource(R.string.sign_up_text),
@@ -173,12 +210,12 @@ private fun SignInScreenContent(
 private fun SignInScreenPreview():Unit{
     ClassSchedulerTheme(darkTheme = true){
         SignInScreenContent(
-            email = "",
-            password = "",
+            state = SignInState(),
             onEmailChange = {},
             onPasswordChange = {},
-            openHomeScreen = {},
-            openSignUpScreen = {}
+            onPasswordVisibilityChange = {},
+            onSignUpButtonClicked = {},
+            onSignInButtonClicked = {}
         );
     }
 }
