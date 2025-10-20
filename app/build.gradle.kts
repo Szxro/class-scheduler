@@ -1,4 +1,7 @@
+import org.gradle.declarative.dsl.schema.ConfigureAccessor
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -13,6 +16,11 @@ plugins {
 android {
     namespace = "com.example.classscheduler"
     compileSdk = 36
+
+    // Loading the secrets that are located in the local.properties
+    val properties = Properties();
+    properties.load(FileInputStream(rootProject.file("local.properties")));
+
     defaultConfig {
         applicationId = "com.example.classscheduler"
         minSdk = 24
@@ -21,6 +29,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "WEB_CLIENT_ID", "\"${properties["WEB_CLIENT_ID"]}\"")
     }
 
     buildTypes {
@@ -41,11 +51,11 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
