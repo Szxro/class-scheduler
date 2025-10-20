@@ -16,6 +16,8 @@ serialization-version = "1.6.3"
 googleServices = "4.4.2"
 firebaseBom = "33.7.0"
 material-icons-version = "1.7.8"
+credentials-manager-version = "1.3.0"
+identity-googleId-version = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +43,9 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 material-icons-extended = {module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-version"}
+credentials = { module="androidx.credentials:credentials", version.ref="credentials-manager-version" }
+credentials-play-services = { module="androidx.credentials:credentials-play-services-auth", version.ref ="credentials-manager-version" }
+identity-google-id = { module="com.google.android.libraries.identity.googleid:googleid", version.ref="identity-googleId-version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

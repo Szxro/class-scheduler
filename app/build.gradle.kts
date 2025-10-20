@@ -59,6 +59,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+
     // Navigation
     implementation(libs.navigation.compose)
 
@@ -69,6 +70,11 @@ dependencies {
 
     // Material Icons
     implementation(libs.material.icons.extended)
+
+    // Google Idp
+    implementation(libs.credentials)
+    implementation(libs.identity.google.id)
+    implementation(libs.credentials.play.services)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
