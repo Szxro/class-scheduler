@@ -60,7 +60,11 @@ class MainActivity : ComponentActivity() {
                                 showErrorSnackBar = {error ->
                                     val message = error.asString(this@MainActivity);
 
-                                    scope.launch { snackBarHostState.showSnackbar(message) };
+                                    scope.launch {
+                                        snackBarHostState.currentSnackbarData?.dismiss();
+
+                                        snackBarHostState.showSnackbar(message);
+                                    };
                                 }
                             )
                         }
