@@ -77,7 +77,7 @@ class SignInViewModel @Inject constructor(
             Guard.against.blankOrNull(
                 _state.value.email,
                 "email",
-                UiText.StringResource(R.string.blank_email_error)
+                UiText.StringResource(R.string.blank_input_error,"email")
             ),
             Guard.against.pattern(
                 _state.value.email,
@@ -90,7 +90,7 @@ class SignInViewModel @Inject constructor(
             Guard.against.blankOrNull(
                 _state.value.password,
                 "password",
-                UiText.StringResource(R.string.blank_password_error)
+                UiText.StringResource(R.string.blank_input_error,"password")
             )
         );
         _state.update {

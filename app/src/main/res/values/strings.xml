@@ -8,10 +8,16 @@
     <!--Email Input-->
     <string name="email_input_placeholder">Email</string>
 
+    <!-- Email Input Errors -->
+    <string name="invalid_email_error">The email is invalid</string>
+
     <!--Password Input-->
     <string name="password_input_placeholder">Password</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide Password</string>
+
+    <!--Password Input Errors-->
+    <string name="invalid_password_error">The password must contain at least one uppercase letter, one lowercase letter, one number, no spaces, and be at least %1$d characters long</string>
 
     <!--Exception descriptions-->
     <string name="generic_exception">Something went wrong</string>
@@ -19,13 +25,7 @@
     <string name="invalid_user_credentials_exception">The email or password are incorrect. Please verify your credentials</string>
     <string name="too_many_request_exception">Too many attempts. Please try again later</string>
 
-    <!-- Email Errors -->
-    <string name="invalid_email_error">The email is invalid</string>
-    <string name="blank_email_error">The email can\'t be blank</string>
-
-    <!--Password Errors-->
-    <string name="blank_password_error">The password can\'t be blank</string>
-    <string name="invalid_password_length_error">The password must contain at least %d characters long</string>
-    <string name="invalid_password_error">The password must contain at least one uppercase letter, one lowercase letter, one number, no spaces, and be at least 8 characters long</string>
-
+    <!--Generic Input errors-->
+    <string name="blank_input_error">The %1$s input can\'t be blank</string>
+    <string name="invalid_input_length_error">The %1$s input must contain a least %2$d characters long</string>
 </resources>
