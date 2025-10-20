@@ -15,11 +15,11 @@ sealed class UiText {
     @Composable
     fun asString() = when(this){
         is DynamicString -> value
-        is StringResource -> stringResource(resId, args);
+        is StringResource -> stringResource(resId, *args);
     }
 
     fun asString(context: Context) = when(this){
         is DynamicString -> value
-        is StringResource -> context.getString(resId,args);
+        is StringResource -> context.getString(resId,*args);
     }
 }
