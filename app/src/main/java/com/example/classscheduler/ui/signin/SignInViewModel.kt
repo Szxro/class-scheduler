@@ -45,7 +45,7 @@ class SignInViewModel @Inject constructor(
                 _state.update { currentState -> currentState.copy(isPasswordHidden = !_state.value.isPasswordHidden) }
             }
 
-            is SignInIntent.OnNavigateToSignUp -> {
+            SignInIntent.OnNavigateToSignUp -> {
                 viewModelScope.launch {
                     channel.send(Navigate(Screen.SignUp));
                 }
