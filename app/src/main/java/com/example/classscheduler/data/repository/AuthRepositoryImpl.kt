@@ -1,5 +1,8 @@
 package com.example.classscheduler.data.repository
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.classscheduler.data.datasource.AuthRemoteDataSource
 import com.example.classscheduler.domain.interfaces.AuthRepository
 import com.example.classscheduler.domain.models.User
@@ -12,15 +15,25 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     val currentUser: FirebaseUser? = authRemoteDataSource.currentUser;
 
-    override suspend fun signUp(email: String, password: String): Unit {
-        authRemoteDataSource.signUp(email,password);
+    override suspend fun signUpWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Result<User> {
+        return authRemoteDataSource.signUpWithEmailAndPassword(email, password);
     }
 
-    override suspend fun signIn(email: String, password: String): Result<User> {
-        return authRemoteDataSource.signIn(email,password);
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String
+    ): Result<User> {
+        return authRemoteDataSource.signInWithEmailAndPassword(email, password);
     }
 
-    override fun signOut() {
-        authRemoteDataSource.signOut();
+    override suspend fun signInWithGoogle(context: Context): Result<User> {
+        return authRemoteDataSource.signInWithGoogle(context);
+    }
+
+    override suspend fun signOut(): Result<Nothing> {
+        return authRemoteDataSource.signOut();
     }
 }
