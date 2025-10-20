@@ -8,11 +8,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
-import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.domain.errors.AuthError
 import com.example.classscheduler.R;
+import com.example.classscheduler.core.ui.UiEvent.*
+import com.example.classscheduler.core.ui.UiText.*
+import com.example.classscheduler.ui.signin.SignInIntent
+import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.utils.validation.guards.Guard
 import com.example.classscheduler.core.utils.validation.guards.blankOrNull
 import com.example.classscheduler.core.utils.validation.guards.pattern
@@ -42,29 +45,55 @@ class SignInViewModel @Inject constructor(
                 _state.update { currentState -> currentState.copy(isPasswordHidden = !_state.value.isPasswordHidden) }
             }
 
-            is SignInIntent.OnSignUp -> intent.navigateToSignUp()
+            is SignInIntent.OnNavigateToSignUp -> {
+                viewModelScope.launch {
+                    channel.send(Navigate(Screen.SignUp));
+                }
+            }
 
-            is SignInIntent.OnSignIn -> {
+            is SignInIntent.OnSignInWithEmailAndPassword -> {
                 if (!isFormValid()) return;
 
                 _state.update { currentState -> currentState.copy(isLoading = true) }
 
                 viewModelScope.launch {
-                    val result = authRepository.signIn(_state.value.email, _state.value.password);
+                    val result = authRepository.signInWithEmailAndPassword(_state.value.email, _state.value.password);
 
                     _state.update { currentState -> currentState.copy(isLoading = false) };
 
                     result.match(
                         onSuccess = { user ->
-                            channel.send(UiEvent.Navigate(user))
+                            channel.send(Navigate(Screen.Home, user));
                         },
                         onFailure = { error ->
                             val message = when (error) {
-                                is AuthError.UserNotFound -> UiText.StringResource(R.string.user_not_found_exception)
-                                is AuthError.InvalidCredentials -> UiText.StringResource(R.string.invalid_user_credentials_exception)
-                                else -> UiText.StringResource(R.string.generic_exception)
+                                is AuthError.UserNotFound -> StringResource(R.string.user_not_found_exception)
+                                is AuthError.InvalidEmailOrPassword -> StringResource(R.string.invalid_user_email_or_password_exception)
+                                else -> StringResource(R.string.generic_exception)
                             }
-                            channel.send(UiEvent.ShowSnackBar(message));
+                            channel.send(ShowSnackBar(message));
+                        }
+                    )
+                }
+            }
+
+           is SignInIntent.OnSignInWithGoogle -> {
+                viewModelScope.launch {
+                    val result = authRepository.signInWithGoogle(intent.context);
+
+                    result.match(
+                        onSuccess = { user ->
+                            channel.send(Navigate(Screen.Home, user));
+                        },
+                        onFailure = { error ->
+                            val message = when(error){
+                                is AuthError.CredentialsCancellation -> StringResource(R.string.credentials_cancellation_exception)
+                                is AuthError.NoCredentialsFound -> StringResource(R.string.no_credentials_found_exception)
+                                is AuthError.UnknownCredentials -> DynamicString("Unknown credentials.")
+                                else -> StringResource(R.string.generic_exception)
+                            };
+
+                            channel.send(ShowSnackBar(message));
                         }
                     )
                 }
@@ -77,20 +106,21 @@ class SignInViewModel @Inject constructor(
             Guard.against.blankOrNull(
                 _state.value.email,
                 "email",
-                UiText.StringResource(R.string.blank_input_error,"email")
+                StringResource(R.string.blank_input_error,"email")
             ),
             Guard.against.pattern(
                 _state.value.email,
                 PatternConstants.EMAIL_PATTERN,
                 "email",
-                UiText.StringResource(R.string.invalid_email_error))
+                StringResource(R.string.invalid_email_error)
+            )
         );
 
         val passwordValidationResult = Guard.against.validateAll(
             Guard.against.blankOrNull(
                 _state.value.password,
                 "password",
-                UiText.StringResource(R.string.blank_input_error,"password")
+                StringResource(R.string.blank_input_error,"password")
             )
         );
         _state.update {
