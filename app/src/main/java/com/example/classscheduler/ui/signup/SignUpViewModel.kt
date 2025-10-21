@@ -14,6 +14,7 @@ import com.example.classscheduler.R;
 import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
+import com.example.classscheduler.core.ui.UiEvent.ShowSnackBar
 import com.example.classscheduler.core.ui.UiText.DynamicString
 import com.example.classscheduler.core.ui.UiText.StringResource
 import com.example.classscheduler.core.utils.constants.PatternConstants
@@ -72,12 +73,7 @@ class SignUpViewModel @Inject constructor(
                             channel.send(UiEvent.Navigate(Screen.Home, user));
                         },
                         onFailure = { error ->
-                            val message = when(error){
-                                is AuthError.EmailCollision -> UiText.StringResource(R.string.email_collision_exception)
-                                else -> UiText.StringResource(R.string.generic_exception)
-                            }
-
-                            channel.send(UiEvent.ShowSnackBar(message));
+                            channel.send(ShowSnackBar(error.message));
                         }
                     )
                 }
@@ -92,14 +88,7 @@ class SignUpViewModel @Inject constructor(
                             channel.send(UiEvent.Navigate(Screen.Home, user));
                         },
                         onFailure = { error ->
-                            val message = when(error){
-                                is AuthError.CredentialsCancellation -> StringResource(R.string.credentials_cancellation_exception)
-                                is AuthError.NoCredentialsFound -> StringResource(R.string.no_credentials_found_exception)
-                                is AuthError.UnknownCredentials -> DynamicString("Unknown credentials.")
-                                else -> StringResource(R.string.generic_exception)
-                            };
-
-                            channel.send(UiEvent.ShowSnackBar(message));
+                            channel.send(ShowSnackBar(error.message));
                         }
                     )
                 }

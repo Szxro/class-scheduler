@@ -66,12 +66,7 @@ class SignInViewModel @Inject constructor(
                             channel.send(Navigate(Screen.Home, user));
                         },
                         onFailure = { error ->
-                            val message = when (error) {
-                                is AuthError.UserNotFound -> StringResource(R.string.user_not_found_exception)
-                                is AuthError.InvalidEmailOrPassword -> StringResource(R.string.invalid_user_email_or_password_exception)
-                                else -> StringResource(R.string.generic_exception)
-                            }
-                            channel.send(ShowSnackBar(message));
+                            channel.send(ShowSnackBar(error.message));
                         }
                     )
                 }
@@ -86,14 +81,7 @@ class SignInViewModel @Inject constructor(
                             channel.send(Navigate(Screen.Home, user));
                         },
                         onFailure = { error ->
-                            val message = when(error){
-                                is AuthError.CredentialsCancellation -> StringResource(R.string.credentials_cancellation_exception)
-                                is AuthError.NoCredentialsFound -> StringResource(R.string.no_credentials_found_exception)
-                                is AuthError.UnknownCredentials -> DynamicString("Unknown credentials.")
-                                else -> StringResource(R.string.generic_exception)
-                            };
-
-                            channel.send(ShowSnackBar(message));
+                            channel.send(ShowSnackBar(error.message));
                         }
                     )
                 }
