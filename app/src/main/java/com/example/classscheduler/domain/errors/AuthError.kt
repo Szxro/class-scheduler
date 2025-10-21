@@ -9,6 +9,8 @@ open class AuthError : Error(){
 
     object InvalidEmailOrPassword : AuthError();
 
+    object EmailCollision : AuthError();
+
     // Google OAUTH
     object CredentialError : AuthError();
 
