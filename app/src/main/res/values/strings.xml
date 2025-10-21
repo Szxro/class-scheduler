@@ -39,6 +39,8 @@
     <!--Sign in with Google exceptions-->
     <string name="credentials_cancellation_exception">Sign-in was canceled by the user.</string>
     <string name="no_credentials_found_exception">No saved account found. Tap Sign In to get started.</string>
+    <string name="unknown_credentials_exception">Unknown credentials.</string>
+    <string name="credentials_clean_up_exception">Error cleaning up credentials</string>
 
     <!--Generic Exception descriptions-->
     <string name="generic_exception">Something went wrong</string>
