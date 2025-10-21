@@ -2,29 +2,39 @@
     <!--App Name-->
     <string name="app_name">Class Scheduler</string>
 
+    <!--Others-->
+    <string name="or_text">OR</string>
+    <string name="continue_text">Continue</string>
+
     <!--Button descriptions-->
-    <string name="sign_in_with_email">Sign In</string>
-    <string name="sign_up_text">Don\’t have an account yet? \n Click here to sign up</string>
-    <string name="sign_with_google_text">Sign with Google</string>
+    <string name="sign_in_action">Sign In</string>
+    <string name="sign_up_action">Sign Up</string>
+    <string name="no_account_question">Don\’t have an account yet? \n Sign up</string>
+    <string name="have_an_account_question">"Already registered? Sign in"</string>
+    <string name="sign_with_google_action">Continue with Google</string>
 
     <!--Email Input-->
-    <string name="email_input_placeholder">Email</string>
+    <string name="email_placeholder">Email</string>
 
     <!-- Email Input Errors -->
     <string name="invalid_email_error">The email is invalid</string>
 
     <!--Password Input-->
-    <string name="password_input_placeholder">Password</string>
+    <string name="password_placeholder">Password</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide Password</string>
 
     <!--Password Input Errors-->
     <string name="invalid_password_error">The password must contain at least one uppercase letter, one lowercase letter, one number, no spaces, and be at least %1$d characters long</string>
 
+    <!--Confirm Password Input-->
+    <string name="confirm_password_placeholder">Confirm Password</string>
+
     <!--Firebase Exception descriptions-->
     <string name="user_not_found_exception">User account not found. Please verify your credentials.</string>
     <string name="invalid_user_email_or_password_exception">The email or password are incorrect. Please verify your credentials</string>
     <string name="too_many_request_exception">Too many attempts. Please try again later</string>
+    <string name="email_collision_exception">The email address is already in use by another account.</string>
 
     <!--Sign in with Google exceptions-->
     <string name="credentials_cancellation_exception">Sign-in was canceled by the user.</string>
@@ -35,5 +45,6 @@
 
     <!--Generic Input errors-->
     <string name="blank_input_error">The %1$s input can\'t be blank</string>
-    <string name="invalid_input_length_error">The %1$s input must contain a least %2$d characters long</string>
+    <string name="invalid_input_length_error">The %1$s input must contain at least %2$d characters long</string>
+    <string name="inputs_must_match">The %1$s input must match the %2$s input</string>
 </resources>
