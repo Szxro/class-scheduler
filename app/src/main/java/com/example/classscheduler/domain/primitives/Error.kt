@@ -1,3 +1,5 @@
 package com.example.classscheduler.domain.primitives
 
-open class Error;
+import com.example.classscheduler.core.ui.UiText
+
+abstract class Error(val message: UiText);
