@@ -89,7 +89,6 @@ class AuthRemoteDataSource @Inject constructor(
             val error = when(exception){
                 is GetCredentialCancellationException -> AuthError.CredentialsCancellation
                 is NoCredentialException -> AuthError.NoCredentialsFound
-                is GetCredentialException -> AuthError.CredentialError
                 else -> AuthError.UnknownError
             }
             Result.onFailure(error);
