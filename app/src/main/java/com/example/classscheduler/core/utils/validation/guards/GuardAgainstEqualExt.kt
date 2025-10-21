@@ -29,7 +29,7 @@ fun GuardClause.equal(
 ): ValidationResult{
     if(value1.trim() != value2.trim()){
         return ValidationResult(
-            isValid = true,
+            isValid = false,
             errorMessage = message ?: UiText.DynamicString("The $parameterName1 must be equal to $parameterName2")
         )
     }
