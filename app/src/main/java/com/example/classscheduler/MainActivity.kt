@@ -70,7 +70,26 @@ class MainActivity : ComponentActivity() {
                         }
                         composable<SignUpRoute>{
                             SignUpScreen(
+                                openHomeScreen = { user ->
+                                    navController.navigate(HomeRoute(user.email)){
+                                        popUpTo(SignInRoute){
+                                            inclusive = true;
+                                        }
+                                        launchSingleTop = true;
+                                    };
+                                },
+                                openSignInScreen = {
+                                    navController.navigate(SignInRoute)
+                                },
+                                showErrorSnackBar = { error ->
+                                    val message = error.asString(this@MainActivity);
 
+                                    scope.launch {
+                                        snackBarHostState.currentSnackbarData?.dismiss();
+
+                                        snackBarHostState.showSnackbar(message);
+                                    };
+                                }
                             );
                         }
                         composable<HomeRoute>{ entry ->
