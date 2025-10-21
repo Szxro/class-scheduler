@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -51,12 +52,10 @@ import kotlinx.serialization.Serializable
 import com.example.classscheduler.R;
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
-import com.example.classscheduler.ui.signin.SignInIntent
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
 import com.example.classscheduler.domain.models.User
 import com.example.classscheduler.ui.theme.DarkBlue
-import hilt_aggregated_deps._com_example_classscheduler_di_ClassSchedulerHiltApp_GeneratedInjector
 
 @Serializable
 object SignInRoute
@@ -117,11 +116,82 @@ private fun SignInScreenContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
-        Image(
-           painter = painterResource(R.drawable.ic_scheduler_logo),
-            contentDescription = null
-        );
-        Spacer(modifier = Modifier.height(16.dp));
+        Text(
+            text = stringResource(R.string.sign_in_action),
+            textAlign = TextAlign.Center,
+            color = DarkBlue,
+            fontFamily = FontFamily.SansSerif,
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp,
+            letterSpacing = 0.1.em
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            onClick = onSignInWithGoogleClicked,
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = DarkBlue,
+                contentColor = Color.White
+            ),
+            border = BorderStroke(1.dp, DarkBlue)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Image(
+                    modifier = Modifier.size(25.dp),
+                    painter = painterResource(R.drawable.google_logo),
+                    contentScale = ContentScale.Fit,
+                    contentDescription = null
+                )
+
+                Text(
+                    text = stringResource(R.string.sign_with_google_action),
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 15.sp,
+                    letterSpacing = 0.1.em
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(1.dp),
+                color = Color.Gray.copy(alpha = 0.5f)
+            )
+
+            Text(
+                text = stringResource(R.string.or_text),
+                color = Color.Gray.copy(alpha = 0.7f),
+                modifier = Modifier.padding(horizontal = 8.dp),
+                fontSize = 12.sp
+            )
+
+            HorizontalDivider(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(1.dp),
+                color = Color.Gray.copy(alpha = 0.5f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             modifier = Modifier
@@ -131,13 +201,13 @@ private fun SignInScreenContent(
             value = state.email,
             onValueChange = onEmailChange,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            placeholder = { Text(text = stringResource(R.string.email_input_placeholder))},
-            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_input_placeholder)) },
+            placeholder = { Text(text = stringResource(R.string.email_placeholder))},
+            leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_placeholder)) },
             isError = state.emailError != null,
             supportingText = {
-                if (state.emailError  != null){
+                state.emailError?.let { error ->
                     Text(
-                        text = state.emailError.asString()
+                        text = error.asString()
                     )
                 }
             }
@@ -152,8 +222,8 @@ private fun SignInScreenContent(
             singleLine = true,
             value = state.password,
             onValueChange = onPasswordChange,
-            placeholder = { Text(text = stringResource(R.string.password_input_placeholder))},
-            leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = stringResource(R.string.password_input_placeholder)) },
+            placeholder = { Text(text = stringResource(R.string.password_placeholder))},
+            leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = stringResource(R.string.password_placeholder)) },
             trailingIcon = {
                 IconButton(onClick = onPasswordVisibilityChange) {
                     val visibilityIcon =
@@ -170,9 +240,9 @@ private fun SignInScreenContent(
             visualTransformation = if(state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
             isError = state.passwordError != null,
             supportingText = {
-                if(state.passwordError != null){
+                state.passwordError?.let { error ->
                     Text(
-                        text = state.passwordError.asString()
+                        text = error.asString()
                     )
                 }
             }
@@ -199,7 +269,7 @@ private fun SignInScreenContent(
                 )
             } else {
                 Text(
-                    text = stringResource(R.string.sign_in_with_email),
+                    text = stringResource(R.string.sign_in_action),
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 15.sp,
@@ -214,7 +284,7 @@ private fun SignInScreenContent(
             onClick = onSignUpButtonClicked
         ) {
             Text(
-                text = stringResource(R.string.sign_up_text),
+                text = stringResource(R.string.no_account_question),
                 textAlign = TextAlign.Center,
                 color = DarkBlue,
                 fontFamily = FontFamily.SansSerif,
@@ -222,40 +292,6 @@ private fun SignInScreenContent(
                 fontSize = 15.sp,
                 letterSpacing = 0.1.em
             )
-        }
-        Spacer(modifier = Modifier.height(16.dp));
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            onClick = onSignInWithGoogleClicked,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = DarkBlue,
-                contentColor = Color.White
-            ),
-            border = BorderStroke(1.dp, DarkBlue)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Image(
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource(R.drawable.google_logo),
-                    contentScale = ContentScale.Fit,
-                    contentDescription = null
-                )
-
-                Text(
-                    text = stringResource(R.string.sign_with_google_text),
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
-                    letterSpacing = 0.1.em
-                )
-            }
         }
     }
 }
