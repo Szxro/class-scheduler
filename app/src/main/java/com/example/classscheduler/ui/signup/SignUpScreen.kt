@@ -64,7 +64,7 @@ object SignUpRoute
 fun SignUpScreen(
     openHomeScreen: (user: User) -> Unit,
     openSignInScreen: () -> Unit,
-    showErrorSnackBar: (UiText) -> Unit,
+    showSnackBar: (UiText) -> Unit,
     modifier: Modifier = Modifier,
     signUpViewModel: SignUpViewModel = hiltViewModel(),
 ):Unit{
@@ -81,7 +81,7 @@ fun SignUpScreen(
                     else -> Unit
                 }
             }
-            is UiEvent.ShowSnackBar -> showErrorSnackBar(event.message)
+            is UiEvent.ShowSnackBar -> showSnackBar(event.message)
         }
     }
 
