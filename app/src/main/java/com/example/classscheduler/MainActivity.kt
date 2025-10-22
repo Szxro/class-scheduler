@@ -57,8 +57,8 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true;
                                     };
                                 },
-                                showErrorSnackBar = {error ->
-                                    val message = error.asString(this@MainActivity);
+                                showSnackBar = { text ->
+                                    val message = text.asString(this@MainActivity);
 
                                     scope.launch {
                                         snackBarHostState.currentSnackbarData?.dismiss();
@@ -81,8 +81,8 @@ class MainActivity : ComponentActivity() {
                                 openSignInScreen = {
                                     navController.navigate(SignInRoute)
                                 },
-                                showErrorSnackBar = { error ->
-                                    val message = error.asString(this@MainActivity);
+                                showSnackBar = { text ->
+                                    val message = text.asString(this@MainActivity);
 
                                     scope.launch {
                                         snackBarHostState.currentSnackbarData?.dismiss();
