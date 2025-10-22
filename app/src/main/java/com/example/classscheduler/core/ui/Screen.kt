@@ -5,4 +5,6 @@ sealed class Screen {
     object SignUp : Screen();
 
     object SignIn : Screen();
+
+    object ResetPassword : Screen();
 }
