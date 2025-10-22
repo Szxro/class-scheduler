@@ -60,13 +60,12 @@ import com.example.classscheduler.ui.theme.DarkBlue
 @Serializable
 object SignInRoute
 
-// TODO: SEE A TUTORIAL ABOUT LOGIN WITH FIREBASE TO IMPROVE THE CURRENT IMPLEMENTATION
 // TODO: MAKE REUSABLE COMPONENTS (TEXT FIELD INPUTS)
-
 @Composable
 fun SignInScreen(
     openHomeScreen: (user: User) -> Unit,
     openSignUpScreen : () -> Unit,
+    openResetPasswordScreen: () -> Unit,
     showSnackBar: (UiText) -> Unit,
     modifier: Modifier = Modifier,
     signInViewModel: SignInViewModel = hiltViewModel(),
@@ -81,6 +80,7 @@ fun SignInScreen(
                 when(event.destination){
                     Screen.Home -> openHomeScreen(event.args!! as User)
                     Screen.SignUp -> openSignUpScreen()
+                    Screen.ResetPassword -> openResetPasswordScreen()
                     else -> Unit
                 }
             }
@@ -96,6 +96,7 @@ fun SignInScreen(
         onSignUpButtonClicked = { signInViewModel.onIntent(SignInIntent.OnNavigateToSignUp)},
         onSignInButtonClicked = { signInViewModel.onIntent(SignInIntent.OnSignInWithEmailAndPassword) },
         onSignInWithGoogleClicked = { signInViewModel.onIntent(SignInIntent.OnSignInWithGoogle(currentContext))},
+        onResetPasswordClicked = { signInViewModel.onIntent(SignInIntent.OnNavigateToResetPassword) },
         modifier
     )
 }
@@ -109,6 +110,7 @@ private fun SignInScreenContent(
     onSignUpButtonClicked: () -> Unit,
     onSignInButtonClicked: () -> Unit,
     onSignInWithGoogleClicked : () -> Unit,
+    onResetPasswordClicked : () -> Unit,
     modifier: Modifier = Modifier
 ):Unit{
     Column(
@@ -118,7 +120,6 @@ private fun SignInScreenContent(
     ){
         Text(
             text = stringResource(R.string.sign_in_action),
-            textAlign = TextAlign.Center,
             color = DarkBlue,
             fontFamily = FontFamily.SansSerif,
             fontWeight = FontWeight.Bold,
@@ -281,6 +282,21 @@ private fun SignInScreenContent(
         Spacer(modifier = Modifier.height(16.dp));
 
         TextButton(
+            onClick = onResetPasswordClicked
+        ) {
+            Text(
+                text = stringResource(R.string.forgot_password_question),
+                color = DarkBlue,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp,
+                letterSpacing = 0.1.em
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp));
+
+        TextButton(
             onClick = onSignUpButtonClicked
         ) {
             Text(
@@ -307,7 +323,8 @@ private fun SignInScreenPreview():Unit{
             onPasswordVisibilityChange = {},
             onSignUpButtonClicked = {},
             onSignInButtonClicked = {},
-            onSignInWithGoogleClicked = {}
+            onSignInWithGoogleClicked = {},
+            onResetPasswordClicked = {}
         );
     }
 }

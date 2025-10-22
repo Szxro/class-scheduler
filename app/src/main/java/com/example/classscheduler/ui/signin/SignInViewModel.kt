@@ -86,6 +86,12 @@ class SignInViewModel @Inject constructor(
                     )
                 }
             }
+
+            SignInIntent.OnNavigateToResetPassword -> {
+                viewModelScope.launch {
+                    channel.send(Navigate(Screen.ResetPassword));
+                }
+            }
         }
     }
 

@@ -14,4 +14,6 @@ sealed class SignInIntent : UiIntent {
     object OnSignInWithEmailAndPassword : SignInIntent();
 
     object OnNavigateToSignUp : SignInIntent();
+
+    object OnNavigateToResetPassword : SignInIntent();
 }
