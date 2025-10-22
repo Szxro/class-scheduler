@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.identity.google.id)
     implementation(libs.credentials.play.services)
 
+    // Splash Screen
+    implementation(libs.splash.screen)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
