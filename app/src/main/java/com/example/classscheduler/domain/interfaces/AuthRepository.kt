@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun signInWithGoogle(context: Context): Result<User>;
 
-    suspend fun signUpWithEmailAndPassword(email: String, password: String): Result<User>;
+    suspend fun signUpWithEmailAndPassword(email: String, password: String): Result<Nothing>;
 
     suspend fun signOut(): Result<Nothing>;
 }
