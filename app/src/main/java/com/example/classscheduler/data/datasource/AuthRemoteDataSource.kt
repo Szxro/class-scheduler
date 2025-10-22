@@ -119,6 +119,25 @@ class AuthRemoteDataSource @Inject constructor(
             Result.onFailure(error);
         }
     }
+
+    suspend fun resetPassword(email: String): Result<Nothing>{
+        return try {
+            auth.sendPasswordResetEmail(email).await();
+
+            Log.d(TAG,"resetPassword:success");
+
+            Result.onSuccess();
+        }catch (exception: Exception){
+            Log.w(TAG,"resetPassword:failure", exception);
+
+            val error = when(exception){
+                else -> AuthError.UnknownError
+            }
+
+            Result.onFailure(error);
+        }
+    }
+
     suspend fun signOut(): Result<Nothing> {
         return try {
             // Firebase Sign out
