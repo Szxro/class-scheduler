@@ -69,8 +69,11 @@ class SignUpViewModel @Inject constructor(
                     _state.update { currentState -> currentState.copy(isLoading = false) }
 
                     result.match(
-                        onSuccess = { user ->
-                            channel.send(UiEvent.Navigate(Screen.Home, user));
+                        onSuccess = {
+                            channel.run {
+                                send(ShowSnackBar(StringResource(R.string.email_verification_sent)));
+                                send(UiEvent.Navigate(Screen.SignIn));
+                            };
                         },
                         onFailure = { error ->
                             channel.send(ShowSnackBar(error.message));
