@@ -13,6 +13,8 @@ open class AuthError(val error: UiText) : Error(error){
 
     object EmailCollision : AuthError(UiText.StringResource(R.string.email_collision_exception));
 
+    object EmailIsNotVerified : AuthError(UiText.StringResource(R.string.email_not_verified))
+
     // Google OAUTH
 
     object CredentialsCancellation : AuthError(UiText.StringResource(R.string.credentials_cancellation_exception));
