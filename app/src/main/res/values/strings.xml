@@ -5,6 +5,8 @@
     <!--Others-->
     <string name="or_text">OR</string>
     <string name="continue_text">Continue</string>
+    <string name="email_not_verified">Your email isn’t verified yet. Check your inbox for a verification link</string>
+    <string name="email_verification_sent">“A verification email has been sent to your email address. Please check your inbox.”</string>
 
     <!--Button descriptions-->
     <string name="sign_in_action">Sign In</string>
