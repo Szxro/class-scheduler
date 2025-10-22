@@ -33,6 +33,10 @@ class AuthRepositoryImpl @Inject constructor(
         return authRemoteDataSource.signInWithGoogle(context);
     }
 
+    override suspend fun resetPassword(email: String): Result<Nothing> {
+        return authRemoteDataSource.resetPassword(email);
+    }
+
     override suspend fun signOut(): Result<Nothing> {
         return authRemoteDataSource.signOut();
     }
