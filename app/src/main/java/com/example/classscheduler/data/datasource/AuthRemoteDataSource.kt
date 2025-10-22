@@ -8,7 +8,6 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.ClearCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.NoCredentialException
 import com.example.classscheduler.domain.errors.AuthError
 import com.example.classscheduler.domain.models.User
@@ -37,6 +36,10 @@ class AuthRemoteDataSource @Inject constructor(
     suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await();
+
+            if(!currentUser!!.isEmailVerified){
+               return Result.Failure(AuthError.EmailIsNotVerified);
+            }
 
             Log.d(TAG,"signInWithEmailAndPassword:success");
 
@@ -95,16 +98,17 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun signUpWithEmailAndPassword(email: String, password: String): Result<User> {
+    suspend fun signUpWithEmailAndPassword(email: String, password: String): Result<Nothing> {
         return try {
+            // Create the user
             val authResult = auth.createUserWithEmailAndPassword(email,password).await();
+
+            // With the current user send a verification email
+            currentUser?.sendEmailVerification()?.await();
 
             Log.d(TAG,"signUpWithEmailAndPassword:success");
 
-            Result.onSuccess(User(
-                username = authResult.user?.displayName ?: "UNKNOWN USERNAME",
-                email = authResult.user?.email ?: "UNKNOWN EMAIL"
-            ));
+            Result.onSuccess();
         }catch (exception: Exception){
             Log.w(TAG,"signUpWithEmailAndPassword:failure", exception);
 
@@ -115,7 +119,6 @@ class AuthRemoteDataSource @Inject constructor(
             Result.onFailure(error);
         }
     }
-
     suspend fun signOut(): Result<Nothing> {
         return try {
             // Firebase Sign out
