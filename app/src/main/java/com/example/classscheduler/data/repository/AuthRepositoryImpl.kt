@@ -18,7 +18,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signUpWithEmailAndPassword(
         email: String,
         password: String
-    ): Result<User> {
+    ): Result<Nothing> {
         return authRemoteDataSource.signUpWithEmailAndPassword(email, password);
     }
 
