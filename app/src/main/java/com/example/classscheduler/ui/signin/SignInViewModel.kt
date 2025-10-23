@@ -21,15 +21,20 @@ import com.example.classscheduler.core.utils.validation.guards.blankOrNull
 import com.example.classscheduler.core.utils.validation.guards.pattern
 import com.example.classscheduler.core.utils.constants.PatternConstants
 import com.example.classscheduler.core.utils.ext.validateAll
+import com.example.classscheduler.core.utils.validation.validators.SignInValidator
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val authRepository: AuthRepositoryImpl,
-) : BaseViewModel<SignInIntent>() {
+) : BaseViewModel<SignInIntent, SignInState>() {
     private val _state = MutableStateFlow(SignInState());
 
     val state = _state.asStateFlow();
+
+    init {
+        addValidator(SignInValidator());
+    }
 
     override fun onIntent(intent: SignInIntent) {
         when (intent) {
@@ -52,7 +57,16 @@ class SignInViewModel @Inject constructor(
             }
 
             is SignInIntent.OnSignInWithEmailAndPassword -> {
-                if (!isFormValid()) return;
+                val validationResult = validator!!.validate(_state.value);
+
+                _state.update { currentState ->
+                    currentState.copy(
+                        emailError = validationResult["email"]?.errorMessage,
+                        passwordError = validationResult["password"]?.errorMessage
+                    )
+                }
+
+                if(!validationResult.values.all { it.isValid }) return;
 
                 _state.update { currentState -> currentState.copy(isLoading = true) }
 
@@ -93,36 +107,5 @@ class SignInViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun isFormValid(): Boolean {
-        val emailValidationResult = Guard.against.validateAll(
-            Guard.against.blankOrNull(
-                _state.value.email,
-                "email",
-                StringResource(R.string.blank_input_error,"email")
-            ),
-            Guard.against.pattern(
-                _state.value.email,
-                PatternConstants.EMAIL_PATTERN,
-                "email",
-                StringResource(R.string.invalid_email_error)
-            )
-        );
-
-        val passwordValidationResult = Guard.against.validateAll(
-            Guard.against.blankOrNull(
-                _state.value.password,
-                "password",
-                StringResource(R.string.blank_input_error,"password")
-            )
-        );
-        _state.update {
-            it.copy(
-                emailError = emailValidationResult.errorMessage,
-                passwordError = passwordValidationResult.errorMessage
-            )
-        }
-        return emailValidationResult.isValid && passwordValidationResult.isValid;
     }
 }
