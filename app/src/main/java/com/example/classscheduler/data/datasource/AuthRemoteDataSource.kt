@@ -30,6 +30,7 @@ class AuthRemoteDataSource @Inject constructor(
     private val credentialRequest: GetCredentialRequest
 ) {
     private val TAG: String = "AuthRemoteDataSource";
+
     val currentUser: FirebaseUser?
         get() = auth.currentUser;
 
@@ -131,6 +132,7 @@ class AuthRemoteDataSource @Inject constructor(
             Log.w(TAG,"resetPassword:failure", exception);
 
             val error = when(exception){
+                is FirebaseAuthInvalidUserException -> AuthError.UserNotFound
                 else -> AuthError.UnknownError
             }
 
