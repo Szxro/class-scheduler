@@ -20,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -33,6 +36,15 @@ class AuthRemoteDataSource @Inject constructor(
 
     val currentUser: FirebaseUser?
         get() = auth.currentUser;
+
+    val currentIdFlow : Flow<String?>
+        get() = callbackFlow {
+            // Listener call when it is a change in the authentication state
+            val listener = FirebaseAuth.AuthStateListener{ _ -> this.trySend(currentUser?.uid)} // its going to send the user uid in a producer scope channel
+            auth.addAuthStateListener(listener); // register the listener in the authentication state
+            awaitClose { auth.removeAuthStateListener(listener) }
+            // Suspends the current coroutine until the channel is either closed or cancelled.
+        }
 
     suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User> {
         return try {
