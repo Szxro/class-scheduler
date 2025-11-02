@@ -54,7 +54,6 @@ import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
-import com.example.classscheduler.domain.models.User
 import com.example.classscheduler.ui.theme.DarkBlue
 
 @Serializable
@@ -63,7 +62,7 @@ object SignInRoute
 // TODO: MAKE REUSABLE COMPONENTS (TEXT FIELD INPUTS)
 @Composable
 fun SignInScreen(
-    openHomeScreen: (user: User) -> Unit,
+    openHomeScreen: () -> Unit,
     openSignUpScreen : () -> Unit,
     openResetPasswordScreen: () -> Unit,
     showSnackBar: (UiText) -> Unit,
@@ -78,7 +77,7 @@ fun SignInScreen(
         when(event){
             is UiEvent.Navigate-> {
                 when(event.destination){
-                    Screen.Home -> openHomeScreen(event.args!! as User)
+                    Screen.Home -> openHomeScreen()
                     Screen.SignUp -> openSignUpScreen()
                     Screen.ResetPassword -> openResetPasswordScreen()
                     else -> Unit

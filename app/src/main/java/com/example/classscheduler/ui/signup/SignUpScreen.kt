@@ -52,7 +52,6 @@ import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
-import com.example.classscheduler.domain.models.User
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import com.example.classscheduler.ui.theme.DarkBlue
 import kotlinx.serialization.Serializable
@@ -62,7 +61,7 @@ object SignUpRoute
 
 @Composable
 fun SignUpScreen(
-    openHomeScreen: (user: User) -> Unit,
+    openHomeScreen: () -> Unit,
     openSignInScreen: () -> Unit,
     showSnackBar: (UiText) -> Unit,
     modifier: Modifier = Modifier,
@@ -76,7 +75,7 @@ fun SignUpScreen(
         when(event){
             is UiEvent.Navigate -> {
                 when(event.destination){
-                    is Screen.Home -> openHomeScreen(event.args!! as User)
+                    is Screen.Home -> openHomeScreen()
                     is Screen.SignIn -> openSignInScreen()
                     else -> Unit
                 }
