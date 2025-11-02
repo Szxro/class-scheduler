@@ -17,8 +17,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.example.classscheduler.core.utils.ext.showMessage
+import com.example.classscheduler.data.datasource.AuthRemoteDataSource
 import com.example.classscheduler.ui.home.HomeRoute
 import com.example.classscheduler.ui.home.HomeScreen
 import com.example.classscheduler.ui.resetpassword.ResetPasswordRoute
@@ -29,10 +29,13 @@ import com.example.classscheduler.ui.signup.SignUpRoute
 import com.example.classscheduler.ui.signup.SignUpScreen
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import jakarta.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var authRemoteDataSource: AuthRemoteDataSource
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen();
@@ -41,76 +44,111 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController();
             val scope = rememberCoroutineScope()
             val snackBarHostState = remember { SnackbarHostState() }
+            // if the current user is active the startDestination is going to be Home
+            val startDestination =
+                authRemoteDataSource.currentUser?.let { HomeRoute } ?: SignInRoute;
 
             ClassSchedulerTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { SnackbarHost(hostState = snackBarHostState)
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackBarHostState)
                     }) { innerPadding ->
-                    NavHost(navController, startDestination = SignInRoute, modifier = Modifier.padding(innerPadding)){
-                        composable<SignInRoute>{
+                    NavHost(
+                        navController,
+                        startDestination = startDestination,
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable<SignInRoute> {
                             SignInScreen(
-                                openHomeScreen = { user ->
-                                    navController.navigate(HomeRoute(user.email)){
+                                openHomeScreen = {
+                                    navController.navigate(HomeRoute) {
                                         // when the user navigate to home is going  to delete the hold stack [SignIn, SignUp,ResetPassword] -> [Home]
                                         popUpTo(navController.graph.startDestinationId) {
                                             inclusive = true
                                         }
-                                        launchSingleTop = true; // Avoid multiple instances of the same screen
+                                        launchSingleTop =
+                                            true; // Avoid multiple instances of the same screen
                                     };
                                 },
                                 openSignUpScreen = {
-                                    navController.navigate(SignUpRoute){
+                                    navController.navigate(SignUpRoute) {
                                         launchSingleTop = true;
                                     };
                                 },
                                 openResetPasswordScreen = {
-                                    navController.navigate(ResetPasswordRoute){
-                                        launchSingleTop = true;
-                                    }
-                                },
-                                showSnackBar = { text ->  snackBarHostState.showMessage(text,this@MainActivity,scope) }
-                            )
-                        }
-                        composable<SignUpRoute>{
-                            SignUpScreen(
-                                openHomeScreen = { user ->
-                                    navController.navigate(HomeRoute(user.email)){
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            inclusive = true
-                                        }
-                                        launchSingleTop = true;
-                                    };
-                                },
-                                openSignInScreen = {
-                                    navController.navigate(SignInRoute){
-                                        launchSingleTop = true;
-                                    }
-                                },
-                                showSnackBar = { text ->  snackBarHostState.showMessage(text,this@MainActivity,scope) }
-                            );
-                        }
-                        composable<ResetPasswordRoute>{
-                            ResetPasswordScreen(
-                                openSignInScreen = {
-                                    navController.navigate(SignInRoute){
+                                    navController.navigate(ResetPasswordRoute) {
                                         launchSingleTop = true;
                                     }
                                 },
                                 showSnackBar = { text ->
                                     snackBarHostState.showMessage(
                                         text,
-                                        this@MainActivity,scope,
+                                        this@MainActivity,
+                                        scope
+                                    )
+                                }
+                            )
+                        }
+                        composable<SignUpRoute> {
+                            SignUpScreen(
+                                openHomeScreen = {
+                                    navController.navigate(HomeRoute) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true;
+                                    };
+                                },
+                                openSignInScreen = {
+                                    navController.navigate(SignInRoute) {
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope
+                                    )
+                                }
+                            );
+                        }
+                        composable<ResetPasswordRoute> {
+                            ResetPasswordScreen(
+                                openSignInScreen = {
+                                    navController.navigate(SignInRoute) {
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
                                         SnackbarDuration.Long
                                     )
                                 }
                             );
                         }
-                        composable<HomeRoute>{ entry ->
-                            val (email) = entry.toRoute<HomeRoute>();
-
+                        composable<HomeRoute> {
                             HomeScreen(
-                                email
+                                openSignInScreen = {
+                                    navController.navigate(SignInRoute) {
+                                        // Resetting the nav graph
+                                        popUpTo(navController.graph.id) {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
                             );
                         }
                     }
