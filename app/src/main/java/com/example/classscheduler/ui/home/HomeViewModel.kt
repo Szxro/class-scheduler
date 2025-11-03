@@ -21,7 +21,12 @@ class HomeViewModel @Inject constructor(
 
     val state = _state.asStateFlow();
 
+    val days = listOf(
+        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    );
+
     init {
+        // TODO: LOAD INITIAL DATA TO SHOW TO THE USE (LIKE THE COUNT OF CLASSES THAT THE USER HAVE BETWEEN MONDAY TO SUNDAY)
         _state.update { currentState -> currentState.copy(currentUser =  authRemoteDataSource.currentUser) }
     }
 
