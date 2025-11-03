@@ -1,5 +1,6 @@
 package com.example.classscheduler
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -57,14 +58,13 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController,
                         startDestination = startDestination,
-                        modifier = Modifier.padding(innerPadding)
                     ) {
                         composable<SignInRoute> {
                             SignInScreen(
                                 openHomeScreen = {
                                     navController.navigate(HomeRoute) {
                                         // when the user navigate to home is going  to delete the hold stack [SignIn, SignUp,ResetPassword] -> [Home]
-                                        popUpTo(navController.graph.startDestinationId) {
+                                        popUpTo(navController.graph.id) {
                                             inclusive = true
                                         }
                                         launchSingleTop =
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(
                                 openHomeScreen = {
                                     navController.navigate(HomeRoute) {
-                                        popUpTo(navController.graph.startDestinationId) {
+                                        popUpTo(navController.graph.id) {
                                             inclusive = true
                                         }
                                         launchSingleTop = true;
