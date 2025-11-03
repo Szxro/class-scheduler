@@ -65,6 +65,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
+    // Coil
+    implementation(libs.coil.compose);
+    implementation(libs.coil.http);
+
     // Serialization
     implementation(libs.kotlinx.serialization.json);
 
