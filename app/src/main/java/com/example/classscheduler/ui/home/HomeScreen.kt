@@ -5,12 +5,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +22,9 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,6 +47,7 @@ import kotlinx.serialization.Serializable
 import androidx.compose.ui.Modifier;
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,6 +84,7 @@ fun HomeScreen(
     }
     HomeScreenContent(
         state,
+        days = homeViewModel.days,
         onLogoutClicked = { homeViewModel.onIntent(HomeIntent.OnLogoOut) },
         modifier
     );
@@ -88,12 +94,13 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenContent(
     state: HomeState,
+    days: List<String>,
     onLogoutClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    val scope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope();
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -145,25 +152,9 @@ private fun HomeScreenContent(
                         }
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    HorizontalDivider();
 
-                    NavigationDrawerItem(
-                        label = { Text("Create Class") },
-                        selected = false,
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add Class"
-                            )
-                        },
-                        onClick = {
-                            // TODO: OPEN DIALOG WITH THE FORM TO CREATE A CLASS (name, code, teacher, classroom, days and times)
-                            scope.launch { drawerState.close() }
-                        },
-                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                    )
-
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    Spacer(Modifier.height(12.dp));
 
                     Text(
                         "Classes by Day",
@@ -172,7 +163,7 @@ private fun HomeScreenContent(
                         modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
                     )
 
-                    listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday").forEach { day ->
+                   days.forEach { day ->
                         NavigationDrawerItem(
                             label = { Text(day) },
                             selected = false,
@@ -183,7 +174,7 @@ private fun HomeScreenContent(
                                 )
                             },
                             onClick = {
-                                // TODO: OPEN A DIALOG WITH INFO ABOUT CLASSES IN THAT DAY
+                                // TODO: OPEN A SCREEN  WITH INFO ABOUT CLASSES IN THAT DAY
                                 scope.launch { drawerState.close() }
                             },
                             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -241,15 +232,70 @@ private fun HomeScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth()
                 ) {
-                    // TODO: CREATE CARD BASE IN THE DAY (() -> OPEN A DIALOG WITH INFO ABOUT THE CLASSES IN THAT DAY)
-
-                    Text(
-                        "Welcome, ${state.currentUser?.email ?: "User"}!",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
+                    days.forEach { day ->
+                        ElevatedCard(
+                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(90.dp),
+                            onClick = {
+                                // TODO: OPEN A SCREEN WITH INFO ABOUT CLASSES IN THAT DAY
+                            }
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.CalendarToday,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text(
+                                                text = day,
+                                                style = MaterialTheme.typography.titleMedium
+                                            )
+                                            Text(
+                                                // TODO: replace with real data
+                                                text = "3 classes",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            // TODO: OPEN THE SCREEN TO ADD NEW CLASS IN THAT DAY
+                                        })
+                                    {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = "Add Class to $day",
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -263,6 +309,7 @@ private fun HomeScreenPreview():Unit{
     ClassSchedulerTheme(darkTheme = true){
         HomeScreenContent(
             state = HomeState(),
+            days = emptyList(),
             onLogoutClicked = {},
         );
     }
