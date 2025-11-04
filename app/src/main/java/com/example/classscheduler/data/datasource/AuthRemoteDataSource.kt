@@ -10,7 +10,6 @@ import androidx.credentials.exceptions.ClearCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
 import com.example.classscheduler.domain.errors.AuthError
-import com.example.classscheduler.domain.models.User
 import com.example.classscheduler.domain.primitives.Result
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -46,9 +45,9 @@ class AuthRemoteDataSource @Inject constructor(
             // Suspends the current coroutine until the channel is either closed or cancelled.
         }
 
-    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<User> {
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Nothing> {
         return try {
-            val authResult = auth.signInWithEmailAndPassword(email, password).await();
+            auth.signInWithEmailAndPassword(email, password).await();
 
             if(!currentUser!!.isEmailVerified){
                return Result.Failure(AuthError.EmailIsNotVerified);
@@ -56,12 +55,7 @@ class AuthRemoteDataSource @Inject constructor(
 
             Log.d(TAG,"signInWithEmailAndPassword:success");
 
-            Result.onSuccess(
-                User(
-                    email = authResult.user?.email ?: "UNKNOWN EMAIL",
-                    username = authResult.user?.displayName ?: "UNKNOWN USERNAME"
-                )
-            );
+            Result.onSuccess();
 
         } catch (exception: Exception) {
             Log.w(TAG,"signInWithEmailAndPassword:failure", exception);
@@ -76,7 +70,7 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
-    suspend fun signInWithGoogle(context: Context): Result<User>{
+    suspend fun signInWithGoogle(context: Context): Result<Nothing>{
         return try {
             // Request a credential from the user
             val credentialResponse = credentialManager.getCredential(context,credentialRequest);
@@ -95,10 +89,7 @@ class AuthRemoteDataSource @Inject constructor(
 
             Log.d(TAG,"signInWithGoogle:success");
 
-            Result.onSuccess(User(
-                email =  authResult.user?.email ?: "UNKNOWN EMAIL",
-                username = authResult.user?.displayName ?: "UNKNOWN USERNAME"
-            ));
+            Result.onSuccess();
         }catch (exception: Exception){
             Log.w(TAG,"signInWithGoogle:failure", exception);
 
