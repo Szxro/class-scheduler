@@ -151,6 +151,26 @@ private fun HomeScreenContent(
                             )
                         }
                     }
+                    Spacer(Modifier.height(12.dp));
+
+                    HorizontalDivider();
+
+                    NavigationDrawerItem(
+                        label = { Text("Create Class") },
+                        selected = false,
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Create Class"
+                            )
+                        },
+                        onClick = {
+                            // TODO: OPEN THE SCREEN TO ADD NEW CLASS
+
+                            scope.launch { drawerState.close() }
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
 
                     HorizontalDivider();
 
@@ -279,18 +299,6 @@ private fun HomeScreenContent(
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            // TODO: OPEN THE SCREEN TO ADD NEW CLASS IN THAT DAY
-                                        })
-                                    {
-                                        Icon(
-                                            imageVector = Icons.Default.Add,
-                                            contentDescription = "Add Class to $day",
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.size(20.dp)
-                                        )
                                     }
                                 }
                             }
