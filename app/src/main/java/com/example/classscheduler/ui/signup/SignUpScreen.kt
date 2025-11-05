@@ -1,5 +1,6 @@
 package com.example.classscheduler.ui.signup
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,17 +14,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -96,7 +102,7 @@ fun SignUpScreen(
         modifier = modifier
     );
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignUpScreenContent(
     state: SignUpState,
@@ -109,226 +115,245 @@ private fun SignUpScreenContent(
     onNavigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ):Unit{
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-        Text(
-            text = stringResource(R.string.sign_up_action),
-            textAlign = TextAlign.Center,
-            color = DarkBlue,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Bold,
-            fontSize = 25.sp,
-            letterSpacing = 0.1.em
-        )
-        Spacer(modifier = Modifier.height(24.dp));
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            onClick = onSignInWithGoogleClicked ,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = DarkBlue,
-                contentColor = Color.White
-            ),
-            border = BorderStroke(1.dp, DarkBlue)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Image(
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource(R.drawable.google_logo),
-                    contentScale = ContentScale.Fit,
-                    contentDescription = null
-                )
-
-                Text(
-                    text = stringResource(R.string.sign_with_google_action),
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
-                    letterSpacing = 0.1.em
-                )
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-        ) {
-            HorizontalDivider(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(1.dp),
-                color = Color.Gray.copy(alpha = 0.5f)
-            )
-
-            Text(
-                text = stringResource(R.string.or_text),
-                color = Color.Gray.copy(alpha = 0.7f),
-                modifier = Modifier.padding(horizontal = 8.dp),
-                fontSize = 12.sp
-            )
-
-            HorizontalDivider(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(1.dp),
-                color = Color.Gray.copy(alpha = 0.5f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            value = state.email,
-            onValueChange = onEmailChange,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            placeholder = { Text(text = stringResource(R.string.email_placeholder)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = stringResource(R.string.email_placeholder)
-                )
-            },
-            isError = state.emailHasError != null,
-            supportingText = {
-                state.emailHasError?.let { error ->
+    Scaffold (
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
-                        text = error.asString()
+                        text = stringResource(R.string.sign_up_action),
+                        textAlign = TextAlign.Center,
+                        color = DarkBlue,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp,
+                        letterSpacing = 0.1.em
                     )
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(8.dp));
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            singleLine = true,
-            value = state.password,
-            onValueChange = onPasswordChange,
-            placeholder = { Text(text = stringResource(R.string.password_placeholder)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = stringResource(R.string.password_placeholder)
-                )
-            },
-            trailingIcon = {
-                IconButton(onClick = onPasswordVisibilityChange) {
-                    val visibilityIcon =
-                        if (state.isPasswordHidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility;
-
-                    val description =
-                        if (state.isPasswordHidden) stringResource(R.string.show_password) else stringResource(
-                            R.string.hide_password
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onNavigateToSignIn
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
                         )
-                    Icon(
-                        imageVector = visibilityIcon,
-                        contentDescription = description
-                    )
+                    }
                 }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-            isError = state.passwordHasError != null,
-            supportingText = {
-                state.passwordHasError?.let { error ->
-                    Text(
-                        text = error.asString()
-                    )
-                }
-            });
+            )
+        }
+    ){ paddingValues ->
 
-        Spacer(modifier = Modifier.height(8.dp));
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            singleLine = true,
-            value = state.confirmPassword,
-            onValueChange = onConfirmPasswordChange,
-            placeholder = { Text(text = "Confirm password") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = stringResource(R.string.password_placeholder)
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = if (state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
-            isError = state.confirmPasswordHasError != null,
-            supportingText = {
-                state.confirmPasswordHasError?.let { error ->
-                    Text(
-                        text = error.asString()
-                    )
-                }
-            });
-
-        Spacer(modifier = Modifier.height(8.dp));
-
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            onClick = onCreateButtonClicked,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = DarkBlue,
-                contentColor = Color.White
-            ),
-            border = BorderStroke(1.dp, DarkBlue)
+        Column(
+            modifier = modifier.fillMaxSize()
+                                .padding(paddingValues),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                onClick = onSignInWithGoogleClicked ,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = DarkBlue,
+                    contentColor = Color.White
+                ),
+                border = BorderStroke(1.dp, DarkBlue)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Image(
+                        modifier = Modifier.size(25.dp),
+                        painter = painterResource(R.drawable.google_logo),
+                        contentScale = ContentScale.Fit,
+                        contentDescription = null
+                    )
+
+                    Text(
+                        text = stringResource(R.string.sign_with_google_action),
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 15.sp,
+                        letterSpacing = 0.1.em
+                    )
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp),
+                    color = Color.Gray.copy(alpha = 0.5f)
                 )
-            } else {
+
                 Text(
-                    text = stringResource(R.string.continue_text),
+                    text = stringResource(R.string.or_text),
+                    color = Color.Gray.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    fontSize = 12.sp
+                )
+
+                HorizontalDivider(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(1.dp),
+                    color = Color.Gray.copy(alpha = 0.5f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                value = state.email,
+                onValueChange = onEmailChange,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                placeholder = { Text(text = stringResource(R.string.email_placeholder)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = stringResource(R.string.email_placeholder)
+                    )
+                },
+                isError = state.emailHasError != null,
+                supportingText = {
+                    state.emailHasError?.let { error ->
+                        Text(
+                            text = error.asString()
+                        )
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp));
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                singleLine = true,
+                value = state.password,
+                onValueChange = onPasswordChange,
+                placeholder = { Text(text = stringResource(R.string.password_placeholder)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.password_placeholder)
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = onPasswordVisibilityChange) {
+                        val visibilityIcon =
+                            if (state.isPasswordHidden) Icons.Filled.VisibilityOff else Icons.Filled.Visibility;
+
+                        val description =
+                            if (state.isPasswordHidden) stringResource(R.string.show_password) else stringResource(
+                                R.string.hide_password
+                            )
+                        Icon(
+                            imageVector = visibilityIcon,
+                            contentDescription = description
+                        )
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = if (state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                isError = state.passwordHasError != null,
+                supportingText = {
+                    state.passwordHasError?.let { error ->
+                        Text(
+                            text = error.asString()
+                        )
+                    }
+                });
+
+            Spacer(modifier = Modifier.height(8.dp));
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                singleLine = true,
+                value = state.confirmPassword,
+                onValueChange = onConfirmPasswordChange,
+                placeholder = { Text(text = "Confirm password") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.password_placeholder)
+                    )
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation = if (state.isPasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                isError = state.confirmPasswordHasError != null,
+                supportingText = {
+                    state.confirmPasswordHasError?.let { error ->
+                        Text(
+                            text = error.asString()
+                        )
+                    }
+                });
+
+            Spacer(modifier = Modifier.height(8.dp));
+
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                onClick = onCreateButtonClicked,
+                colors = ButtonDefaults.outlinedButtonColors(
+                    containerColor = DarkBlue,
+                    contentColor = Color.White
+                ),
+                border = BorderStroke(1.dp, DarkBlue)
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.continue_text),
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 15.sp,
+                        letterSpacing = 0.1.em
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp));
+
+            TextButton(
+                onClick = onNavigateToSignIn
+            ) {
+                Text(
+                    text = stringResource(R.string.have_an_account_question),
+                    textAlign = TextAlign.Center,
+                    color = DarkBlue,
                     fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
                     letterSpacing = 0.1.em
                 )
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp));
-
-        TextButton(
-            onClick = onNavigateToSignIn
-        ) {
-            Text(
-                text = stringResource(R.string.have_an_account_question),
-                textAlign = TextAlign.Center,
-                color = DarkBlue,
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                letterSpacing = 0.1.em
-            )
         }
     }
 }

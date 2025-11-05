@@ -7,4 +7,6 @@ sealed class ResetPasswordIntent : UiIntent {
     data class OnEmailChange(val email: String) : ResetPasswordIntent();
 
     object OnResetPasswordButtonClicked : ResetPasswordIntent();
+
+    object OnNavigateToSignIn : ResetPasswordIntent();
 }
