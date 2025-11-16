@@ -83,6 +83,7 @@ dependencies {
     // Hilt
     implementation(libs.navigation.hilt.compose)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.ui)
     ksp(libs.hilt.android.compiler)
 
     // Material Icons
