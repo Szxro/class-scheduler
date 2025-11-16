@@ -1,5 +1,7 @@
 package com.example.classscheduler.ui.home
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,16 +15,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,8 +57,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.Serializable
 import androidx.compose.ui.Modifier;
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,44 +71,60 @@ import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import kotlinx.coroutines.launch
+import com.example.classscheduler.R;
+import com.example.classscheduler.core.utils.ext.toLocalTime
+import com.example.classscheduler.domain.models.Class
+import com.example.classscheduler.domain.models.Schedule
+import java.time.format.DateTimeFormatter
 
 @Serializable
 object HomeRoute;
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun HomeScreen(
-    openSignInScreen : () -> Unit,
+    openSignInScreen: () -> Unit,
+    openManageClassesScreen: () -> Unit,
+    openDayScheduleScreen: (String) -> Unit,
     showSnackBar: (UiText) -> Unit,
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel()
-):Unit{
+): Unit {
     val state by homeViewModel.state.collectAsStateWithLifecycle();
 
     homeViewModel.events.ObserveEventsAs { event ->
-        when(event){
+        when (event) {
             is UiEvent.Navigate -> {
-                when(event.destination){
+                when (event.destination) {
                     Screen.SignIn -> openSignInScreen()
+                    Screen.ManageClasses -> openManageClassesScreen()
+                    Screen.DaySchedule -> openDayScheduleScreen(event.args as String);
                     else -> Unit
                 }
             }
-            is UiEvent.ShowSnackBar ->  showSnackBar(event.message)
+
+            is UiEvent.ShowSnackBar -> showSnackBar(event.message)
         }
     }
     HomeScreenContent(
         state,
         days = homeViewModel.days,
         onLogoutClicked = { homeViewModel.onIntent(HomeIntent.OnLogoOut) },
+        onManageClassesClicked = { homeViewModel.onIntent(HomeIntent.OnManageClassesClicked) },
+        onNavigateToDayScheduleScreen = {day -> homeViewModel.onIntent(HomeIntent.OnNavigateToDaySchedule(day))},
         modifier
     );
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContent(
     state: HomeState,
     days: List<String>,
     onLogoutClicked: () -> Unit,
+    onManageClassesClicked: () -> Unit,
+    onNavigateToDayScheduleScreen: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -123,7 +152,7 @@ private fun HomeScreenContent(
                             state.currentUser?.photoUrl?.let {
                                 AsyncImage(
                                     model = it,
-                                    contentDescription = "Profile Picture",
+                                    contentDescription = stringResource(R.string.profile_picture),
                                     modifier = Modifier
                                         .size(90.dp)
                                         .clip(CircleShape)
@@ -134,10 +163,9 @@ private fun HomeScreenContent(
                                         ),
                                     contentScale = ContentScale.Crop
                                 )
-                            } ?:
-                            Icon(
+                            } ?: Icon(
                                 imageVector = Icons.Default.AccountCircle,
-                                contentDescription = "Default Profile Picture",
+                                contentDescription = stringResource(R.string.default_profile_picture),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.size(90.dp)
                             )
@@ -145,7 +173,8 @@ private fun HomeScreenContent(
                             Spacer(Modifier.height(8.dp))
 
                             Text(
-                                text = state.currentUser?.email ?: "Unknown Email",
+                                text = state.currentUser?.email
+                                    ?: stringResource(R.string.unknown_email),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -156,18 +185,21 @@ private fun HomeScreenContent(
                     HorizontalDivider();
 
                     NavigationDrawerItem(
-                        label = { Text("Create Class") },
+                        label = { Text("Manage Classes") },
                         selected = false,
                         icon = {
                             Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Create Class"
+                                imageVector = Icons.Default.Build,
+                                contentDescription = "Manage Classes"
                             )
                         },
                         onClick = {
-                            // TODO: OPEN THE SCREEN TO ADD NEW CLASS
-
-                            scope.launch { drawerState.close() }
+                            scope.launch {
+                                drawerState.apply {
+                                    close();
+                                    onManageClassesClicked();
+                                }
+                            }
                         },
                         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                     )
@@ -177,13 +209,13 @@ private fun HomeScreenContent(
                     Spacer(Modifier.height(12.dp));
 
                     Text(
-                        "Classes by Day",
+                        text = stringResource(R.string.classes_by_day),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
                     )
 
-                   days.forEach { day ->
+                    days.forEach { day ->
                         NavigationDrawerItem(
                             label = { Text(day) },
                             selected = false,
@@ -194,8 +226,12 @@ private fun HomeScreenContent(
                                 )
                             },
                             onClick = {
-                                // TODO: OPEN A SCREEN  WITH INFO ABOUT CLASSES IN THAT DAY
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.apply {
+                                        close()
+                                        onNavigateToDayScheduleScreen(day);
+                                    }
+                                }
                             },
                             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                         )
@@ -204,7 +240,7 @@ private fun HomeScreenContent(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
                     NavigationDrawerItem(
-                        label = { Text("Logout") },
+                        label = { Text(stringResource(R.string.logout_action)) },
                         selected = false,
                         icon = {
                             Icon(
@@ -231,7 +267,7 @@ private fun HomeScreenContent(
                             onClick = {
                                 scope.launch {
                                     drawerState.apply {
-                                        if(isClosed) open() else close();
+                                        if (isClosed) open() else close();
                                     }
                                 }
                             }
@@ -251,6 +287,15 @@ private fun HomeScreenContent(
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
+                val displayName = when {
+                    !state.currentUser?.displayName.isNullOrBlank() ->
+                        state.currentUser.displayName
+
+                    !state.currentUser?.email.isNullOrBlank() ->
+                        state.currentUser.email?.substringBefore("@")
+                    else -> "User"
+                }
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -258,51 +303,27 @@ private fun HomeScreenContent(
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                         .fillMaxWidth()
                 ) {
-                    days.forEach { day ->
-                        ElevatedCard(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                            shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(90.dp),
-                            onClick = {
-                                // TODO: OPEN A SCREEN WITH INFO ABOUT CLASSES IN THAT DAY
-                            }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 16.dp, vertical = 12.dp)
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Default.CalendarToday,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(28.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Column {
-                                            Text(
-                                                text = day,
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
-                                            Text(
-                                                // TODO: replace with real data
-                                                text = "3 classes",
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    Text(
+                        text = "Welcome back, $displayName",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    );
+
+                    HorizontalDivider();
+
+                    Text(
+                        text = "Today's classes",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    );
+
+                    when {
+                        // Show loading indicator
+                        state.isLoading -> LoadingIndicator()
+                        // Empty State
+                        state.currentClasses.isEmpty() -> EmptyClassSection()
+                        //Show today classes
+                        else -> ClassesListSection(state.currentClasses)
                     }
                 }
             }
@@ -310,15 +331,191 @@ private fun HomeScreenContent(
     }
 }
 
+@Composable
+private fun LoadingIndicator(): Unit {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Loading today’s classes...",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
 
+@Composable
+private fun EmptyClassSection(): Unit {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.CalendarMonth,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(64.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "No classes scheduled for today",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+@Composable
+private fun ClassesListSection(classes: List<Class>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(classes) { classItem ->
+            ElevatedCard(
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.School,
+                            contentDescription = null,
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = classItem.name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Teacher: ${classItem.teacher}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = "Classroom: ${classItem.classroom}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    Text(
+                        text = "Schedule",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    classItem.schedule.forEach { schedule ->
+                        ScheduleItem(schedule)
+                        Spacer(Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
+@Composable
+fun ScheduleItem(schedule: Schedule) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+            .padding(12.dp)
+    ) {
+
+        AssistChip(
+            onClick = {},
+            label = {
+                Text(
+                    schedule.day,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.CalendarToday,
+                    contentDescription = null
+                )
+            }
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        ScheduleTimeRow(
+            icon = Icons.Default.AccessTime,
+            label = "Start",
+            time = schedule.startTimeLong?.toLocalTime()
+                ?.format(DateTimeFormatter.ofPattern("hh:mm a"))
+                ?: "Not registered"
+        )
+
+        Spacer(Modifier.height(4.dp))
+
+        ScheduleTimeRow(
+            icon = Icons.Default.Schedule,
+            label = "End",
+            time = schedule.endTimeLong?.toLocalTime()
+                ?.format(DateTimeFormatter.ofPattern("hh:mm a"))
+                ?: "Not registered"
+        )
+    }
+}
+
+@Composable
+fun ScheduleTimeRow(
+    icon: ImageVector,
+    label: String,
+    time: String
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(
+            "$label: $time",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
-private fun HomeScreenPreview():Unit{
-    ClassSchedulerTheme(darkTheme = true){
+private fun HomeScreenPreview(): Unit {
+    ClassSchedulerTheme(darkTheme = true) {
         HomeScreenContent(
             state = HomeState(),
             days = emptyList(),
             onLogoutClicked = {},
+            onManageClassesClicked = {},
+            onNavigateToDayScheduleScreen = {}
         );
     }
 }

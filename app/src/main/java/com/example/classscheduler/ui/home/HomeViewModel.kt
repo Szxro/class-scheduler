@@ -4,8 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
+import com.example.classscheduler.core.ui.UiEvent.*
 import com.example.classscheduler.core.utils.ext.match
+import com.example.classscheduler.core.utils.helpers.getCurrentDay
 import com.example.classscheduler.data.repository.AuthRepositoryImpl
+import com.example.classscheduler.data.repository.ClassRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authRemoteDataSource: AuthRepositoryImpl
+    private val authRemoteDataSource: AuthRepositoryImpl,
+    private val classRepository: ClassRepositoryImpl
 ) : BaseViewModel<HomeIntent, HomeState>() {
     private val _state = MutableStateFlow(HomeState());
 
@@ -26,12 +30,34 @@ class HomeViewModel @Inject constructor(
     );
 
     init {
-        // TODO: LOAD INITIAL DATA TO SHOW TO THE USE (LIKE THE COUNT OF CLASSES THAT THE USER HAVE BETWEEN MONDAY TO SUNDAY)
-        _state.update { currentState -> currentState.copy(currentUser =  authRemoteDataSource.currentUser) }
+        viewModelScope.launch {
+            _state.update { currentState -> currentState.copy(isLoading = true) };
+
+            val result = classRepository.getClassesByDay(day = getCurrentDay(), authRemoteDataSource.currentUser?.uid!!);
+
+            result.match(
+                onSuccess = { classes ->
+                    _state.update { currentState -> currentState.copy(
+                        currentUser = authRemoteDataSource.currentUser,
+                        currentClasses = classes ?: emptyList()
+                    ) }
+                },
+                onFailure = { error ->
+                    channel.send(UiEvent.ShowSnackBar(error.message));
+                }
+            );
+
+            _state.update { currentState -> currentState.copy(isLoading = false) };
+        }
     }
 
     override fun onIntent(intent: HomeIntent) {
         when(intent){
+            HomeIntent.OnManageClassesClicked ->{
+                viewModelScope.launch {
+                    channel.send(Navigate(Screen.ManageClasses))
+                }
+            }
             HomeIntent.OnLogoOut -> {
                 _state.update { currentState -> currentState.copy(isLoading = true) }
 
@@ -42,12 +68,17 @@ class HomeViewModel @Inject constructor(
 
                     result.match(
                         onSuccess = {
-                            channel.send(UiEvent.Navigate(Screen.SignIn));
+                            channel.send(Navigate(Screen.SignIn));
                         },
                         onFailure = { error ->
-                            channel.send(UiEvent.ShowSnackBar(error.message));
+                            channel.send(ShowSnackBar(error.message));
                         }
                     )
+                }
+            }
+            is HomeIntent.OnNavigateToDaySchedule -> {
+                viewModelScope.launch {
+                    channel.send(Navigate(Screen.DaySchedule, intent.day));
                 }
             }
         }
