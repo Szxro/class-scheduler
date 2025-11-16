@@ -9,7 +9,10 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.ClearCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
+import com.example.classscheduler.core.common.BaseDataSource
 import com.example.classscheduler.domain.errors.AuthError
+import com.example.classscheduler.domain.errors.GenericError
+import com.example.classscheduler.domain.primitives.Error
 import com.example.classscheduler.domain.primitives.Result
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
@@ -30,9 +33,7 @@ class AuthRemoteDataSource @Inject constructor(
     private val auth: FirebaseAuth,
     private val credentialManager: CredentialManager,
     private val credentialRequest: GetCredentialRequest
-) {
-    private val TAG: String = "AuthRemoteDataSource";
-
+) : BaseDataSource( "AuthRemoteDataSource") {
     val currentUser: FirebaseUser?
         get() = auth.currentUser;
 
@@ -60,11 +61,7 @@ class AuthRemoteDataSource @Inject constructor(
         } catch (exception: Exception) {
             Log.w(TAG,"signInWithEmailAndPassword:failure", exception);
 
-            val error = when (exception) {
-                is FirebaseAuthInvalidUserException -> AuthError.UserNotFound
-                is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidEmailOrPassword
-                else -> AuthError.UnknownError
-            };
+            val error = getErrorFromException(exception);
 
             Result.onFailure(error);
         }
@@ -93,11 +90,8 @@ class AuthRemoteDataSource @Inject constructor(
         }catch (exception: Exception){
             Log.w(TAG,"signInWithGoogle:failure", exception);
 
-            val error = when(exception){
-                is GetCredentialCancellationException -> AuthError.CredentialsCancellation
-                is NoCredentialException -> AuthError.NoCredentialsFound
-                else -> AuthError.UnknownError
-            }
+            val error = getErrorFromException(exception);
+
             Result.onFailure(error);
         }
     }
@@ -116,10 +110,8 @@ class AuthRemoteDataSource @Inject constructor(
         }catch (exception: Exception){
             Log.w(TAG,"signUpWithEmailAndPassword:failure", exception);
 
-            val error = when(exception){
-                is FirebaseAuthUserCollisionException -> AuthError.EmailCollision
-                else -> AuthError.UnknownError
-            }
+            val error = getErrorFromException(exception);
+
             Result.onFailure(error);
         }
     }
@@ -134,10 +126,7 @@ class AuthRemoteDataSource @Inject constructor(
         }catch (exception: Exception){
             Log.w(TAG,"resetPassword:failure", exception);
 
-            val error = when(exception){
-                is FirebaseAuthInvalidUserException -> AuthError.UserNotFound
-                else -> AuthError.UnknownError
-            }
+            val error = getErrorFromException(exception);
 
             Result.onFailure(error);
         }
@@ -159,12 +148,23 @@ class AuthRemoteDataSource @Inject constructor(
         }catch (exception: Exception){
             Log.w(TAG,"signOut:failure", exception);
 
-            val error = when(exception){
-                is ClearCredentialException -> AuthError.CredentialsCleanUpError
-                else -> AuthError.UnknownError
-            };
+            val error = getErrorFromException(exception);
 
             Result.onFailure(error);
         }
+    }
+
+    override fun getErrorFromException(exception: Exception): Error {
+        val error = when(exception){
+            is FirebaseAuthInvalidUserException -> AuthError.UserNotFound
+            is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidEmailOrPassword
+            is FirebaseAuthUserCollisionException -> AuthError.EmailCollision
+            is ClearCredentialException -> AuthError.CredentialsCleanUpError
+            is GetCredentialCancellationException -> AuthError.CredentialsCancellation
+            is NoCredentialException -> AuthError.NoCredentialsFound
+            else -> GenericError.UnknownError
+        }
+
+        return error;
     }
 }
