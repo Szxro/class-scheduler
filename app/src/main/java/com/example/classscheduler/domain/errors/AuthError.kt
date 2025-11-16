@@ -4,7 +4,7 @@ import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.domain.primitives.Error
 import com.example.classscheduler.R;
 
-open class AuthError(val error: UiText) : Error(error){
+sealed class AuthError(val error: UiText) : Error(error){
 
     // Firebase Auth
     object UserNotFound : AuthError(UiText.StringResource(R.string.user_not_found_exception));
@@ -24,7 +24,4 @@ open class AuthError(val error: UiText) : Error(error){
     object CredentialsCleanUpError : AuthError(UiText.StringResource(R.string.credentials_clean_up_exception));
 
     object UnknownCredentials : AuthError(UiText.StringResource(R.string.unknown_credentials_exception));
-
-    // Generic Error
-    object UnknownError : AuthError(UiText.StringResource(R.string.generic_exception));
 }

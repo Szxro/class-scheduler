@@ -20,6 +20,7 @@ credentials-manager-version = "1.5.0"
 identity-googleId-version = "1.1.1"
 splash-screen-version = "1.0.1"
 coil-compose-version = "3.3.0"
+ui = "1.9.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ identity-google-id = { module="com.google.android.libraries.identity.googleid:go
 splash-screen = { module="androidx.core:core-splashscreen", version.ref="splash-screen-version" }
 coil-compose = { module="io.coil-kt.coil3:coil-compose", version.ref="coil-compose-version" }
 coil-http = { module="io.coil-kt.coil3:coil-network-okhttp", version.ref="coil-compose-version" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
