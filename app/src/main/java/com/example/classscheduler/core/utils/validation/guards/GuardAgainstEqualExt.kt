@@ -1,5 +1,7 @@
 package com.example.classscheduler.core.utils.validation.guards
 
+import android.util.Log
+import androidx.compose.ui.platform.LocalGraphicsContext
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.validation.ValidationResult
 
@@ -18,6 +20,24 @@ fun GuardClause.noEqual(
         isValid = false,
         errorMessage = message ?: UiText.DynamicString("The $parameterName1 can't be equal to $parameterName2")
     )
+}
+
+fun <T> GuardClause.ensureAllValid(
+    items: List<T>,
+    predicate: (T) -> Boolean,
+    parameterName: String,
+    message: UiText? = null
+): ValidationResult{
+    val isValid = items.all(predicate);
+
+    if(!isValid){
+        return ValidationResult(
+            isValid = false,
+            errorMessage = message ?: UiText.DynamicString("The $parameterName can't contain duplicate values")
+        );
+    }
+
+    return ValidationResult(isValid = true);
 }
 
 fun GuardClause.equal(
