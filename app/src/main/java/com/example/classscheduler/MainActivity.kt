@@ -1,12 +1,13 @@
 package com.example.classscheduler
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -20,8 +21,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.classscheduler.core.utils.ext.showMessage
 import com.example.classscheduler.data.datasource.AuthRemoteDataSource
+import com.example.classscheduler.ui.createclass.CreateClassRoute
+import com.example.classscheduler.ui.createclass.CreateClassScreen
+import com.example.classscheduler.ui.dayschedule.DayScheduleRoute
+import com.example.classscheduler.ui.dayschedule.DayScheduleScreen
+import com.example.classscheduler.ui.deleteclass.DeleteClassRoute
+import com.example.classscheduler.ui.deleteclass.DeleteClassScreen
 import com.example.classscheduler.ui.home.HomeRoute
 import com.example.classscheduler.ui.home.HomeScreen
+import com.example.classscheduler.ui.manageclasses.ManageClassesRoute
+import com.example.classscheduler.ui.manageclasses.ManageClassesScreen
 import com.example.classscheduler.ui.resetpassword.ResetPasswordRoute
 import com.example.classscheduler.ui.resetpassword.ResetPasswordScreen
 import com.example.classscheduler.ui.signin.SignInRoute
@@ -32,11 +41,16 @@ import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 
+
+// TODO: IMPROVE MAIN ACTIVITY (REFACTOR IT)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var authRemoteDataSource: AuthRemoteDataSource
 
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen();
@@ -142,6 +156,16 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true;
                                     }
                                 },
+                                openManageClassesScreen = {
+                                    navController.navigate(ManageClassesRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                openDayScheduleScreen = { day ->
+                                    navController.navigate(DayScheduleRoute(day)){
+                                        launchSingleTop = true;
+                                    }
+                                },
                                 showSnackBar = { text ->
                                     snackBarHostState.showMessage(
                                         text,
@@ -150,6 +174,76 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                             );
+                        }
+                        composable<ManageClassesRoute>{
+                            ManageClassesScreen(
+                                openHomeScreen = {
+                                    navController.navigate(HomeRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                openCreateClassScreen = {
+                                    navController.navigate(CreateClassRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                openUpdateClassScreen = {},
+                                openDeleteClassScreen = {
+                                    navController.navigate(DeleteClassRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                openConfigureClassScreen = {},
+                            );
+                        }
+                        composable<CreateClassRoute>{
+                            CreateClassScreen(
+                                openManageClassesScreen = {
+                                    navController.navigate(ManageClassesRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
+                            )
+                        }
+
+                        composable<DeleteClassRoute>{
+                            DeleteClassScreen(
+                                openManageClass = {
+                                    navController.navigate(ManageClassesRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
+                            )
+                        }
+                        composable<DayScheduleRoute>{
+                            DayScheduleScreen(
+                                openHomeScreen = {
+                                    navController.navigate(HomeRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
+                            )
                         }
                     }
                 }
