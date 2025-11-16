@@ -6,5 +6,17 @@ sealed class Screen {
 
     object SignIn : Screen();
 
+    object ManageClasses : Screen();
+
+    object CreateClass : Screen();
+
+    object UpdateClass : Screen();
+
+    object DeleteClass : Screen();
+
+    object ConfigureClass : Screen();
+
     object ResetPassword : Screen();
+
+    object DaySchedule : Screen();
 }
