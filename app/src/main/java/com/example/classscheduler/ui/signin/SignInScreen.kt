@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.signin
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,20 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,9 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -54,12 +45,14 @@ import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
+import com.example.classscheduler.ui.shared.AuthWithGoogleButton
+import com.example.classscheduler.ui.shared.LoadingButton
+import com.example.classscheduler.ui.shared.SingleLineTextField
 import com.example.classscheduler.ui.theme.DarkBlue
 
 @Serializable
 object SignInRoute
 
-// TODO: MAKE REUSABLE COMPONENTS (TEXT FIELD INPUTS)
 @Composable
 fun SignInScreen(
     openHomeScreen: () -> Unit,
@@ -128,38 +121,10 @@ private fun SignInScreenContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            onClick = onSignInWithGoogleClicked,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = DarkBlue,
-                contentColor = Color.White
-            ),
-            border = BorderStroke(1.dp, DarkBlue)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Image(
-                    modifier = Modifier.size(25.dp),
-                    painter = painterResource(R.drawable.google_logo),
-                    contentScale = ContentScale.Fit,
-                    contentDescription = null
-                )
-
-                Text(
-                    text = stringResource(R.string.sign_with_google_action),
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
-                    letterSpacing = 0.1.em
-                )
-            }
-        }
+        AuthWithGoogleButton(
+            label = R.string.sign_in_with_google_action,
+            onSignInWithGoogleClicked
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -193,15 +158,12 @@ private fun SignInScreenContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            singleLine = true,
+        SingleLineTextField(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
             value = state.email,
             onValueChange = onEmailChange,
+            placeholder = R.string.email_placeholder,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            placeholder = { Text(text = stringResource(R.string.email_placeholder))},
             leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_placeholder)) },
             isError = state.emailError != null,
             supportingText = {
@@ -215,14 +177,11 @@ private fun SignInScreenContent(
 
         Spacer(modifier = Modifier.height(16.dp));
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            singleLine = true,
+        SingleLineTextField(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
             value = state.password,
             onValueChange = onPasswordChange,
-            placeholder = { Text(text = stringResource(R.string.password_placeholder))},
+            placeholder = R.string.password_placeholder,
             leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = stringResource(R.string.password_placeholder)) },
             trailingIcon = {
                 IconButton(onClick = onPasswordVisibilityChange) {
@@ -250,33 +209,15 @@ private fun SignInScreenContent(
 
         Spacer(modifier = Modifier.height(16.dp));
 
-        OutlinedButton(
+        LoadingButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             onClick = onSignInButtonClicked,
-            colors = ButtonDefaults.outlinedButtonColors(
-                containerColor = DarkBlue,
-                contentColor = Color.White
-            ),
-            border = BorderStroke(1.dp, DarkBlue)
-        ) {
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.sign_in_action),
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 15.sp,
-                    letterSpacing = 0.1.em
-                )
-            }
-        }
+            isLoading = state.isLoading,
+            enabled = true,
+            label = R.string.sign_in_action
+        )
 
         Spacer(modifier = Modifier.height(16.dp));
 

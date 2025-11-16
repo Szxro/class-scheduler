@@ -1,6 +1,6 @@
 package com.example.classscheduler.ui.resetpassword
 
-import androidx.compose.foundation.BorderStroke
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,20 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +42,8 @@ import com.example.classscheduler.R;
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
+import com.example.classscheduler.ui.shared.LoadingButton
+import com.example.classscheduler.ui.shared.SingleLineTextField
 import com.example.classscheduler.ui.theme.DarkBlue
 
 @Serializable
@@ -82,6 +79,7 @@ fun ResetPasswordScreen(
     )
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ResetPasswordScreenContent(
@@ -94,17 +92,7 @@ private fun ResetPasswordScreenContent(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text =stringResource(R.string.reset_password_action),
-                        color = DarkBlue,
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp,
-                        letterSpacing = 0.1.em
-                    );
-
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(
                         onClick = onNavigateToSignIn
@@ -117,14 +105,23 @@ private fun ResetPasswordScreenContent(
                 }
             )
         }
-    ){ paddingValues ->
-
+    ){
         Column(
-            modifier = modifier.fillMaxSize()
-                               .padding(paddingValues),
+            modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ){
+            Text(
+                text =stringResource(R.string.reset_password_action),
+                color = DarkBlue,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                letterSpacing = 0.1.em
+            );
+
+            Spacer(modifier = Modifier.height(8.dp));
+
             Text(
                 text = stringResource(R.string.password_reset_message),
                 textAlign = TextAlign.Center,
@@ -134,15 +131,14 @@ private fun ResetPasswordScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            SingleLineTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
                 value = state.email,
                 onValueChange = onEmailChange,
-                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = stringResource(R.string.email_placeholder))},
+                placeholder = R.string.email_placeholder,
                 leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = stringResource(R.string.email_placeholder)) },
                 isError = state.emailHasError !== null,
                 supportingText = {
@@ -151,38 +147,19 @@ private fun ResetPasswordScreenContent(
                             text = error.asString()
                         )
                     }
-                }
-            )
+                });
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedButton(
+            LoadingButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
+                label = R.string.reset_password_action,
+                isLoading = state.isLoading,
+                enabled = true,
                 onClick = onResetPasswordButtonClicked,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = DarkBlue,
-                    contentColor = Color.White
-                ),
-                border = BorderStroke(1.dp, DarkBlue)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.reset_password_action),
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 15.sp,
-                        letterSpacing = 0.1.em
-                    )
-                }
-            }
+            );
         }
     }
 }

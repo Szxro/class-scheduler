@@ -1,8 +1,6 @@
 package com.example.classscheduler.ui.signup
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,23 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,9 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +49,9 @@ import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
+import com.example.classscheduler.ui.shared.AuthWithGoogleButton
+import com.example.classscheduler.ui.shared.LoadingButton
+import com.example.classscheduler.ui.shared.SingleLineTextField
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import com.example.classscheduler.ui.theme.DarkBlue
 import kotlinx.serialization.Serializable
@@ -96,12 +90,13 @@ fun SignUpScreen(
         onPasswordChange = { password -> signUpViewModel.onIntent(SignUpIntent.OnPasswordChange(password)) },
         onConfirmPasswordChange = { confirmPassword -> signUpViewModel.onIntent(SignUpIntent.OnConfirmPasswordChange(confirmPassword)) },
         onPasswordVisibilityChange = { signUpViewModel.onIntent(SignUpIntent.OnPasswordVisibilityChange) },
-        onSignInWithGoogleClicked = {signUpViewModel.onIntent(SignUpIntent.OnSignUpWithGoogle(currentContext)) },
+        onSignUpWithGoogleClicked = {signUpViewModel.onIntent(SignUpIntent.OnSignUpWithGoogle(currentContext)) },
         onCreateButtonClicked = { signUpViewModel.onIntent(SignUpIntent.OnSignUp) },
         onNavigateToSignIn = {signUpViewModel.onIntent(SignUpIntent.OnNavigateToSignIn)},
         modifier = modifier
     );
 }
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SignUpScreenContent(
@@ -111,24 +106,14 @@ private fun SignUpScreenContent(
     onConfirmPasswordChange: (String) -> Unit,
     onPasswordVisibilityChange : () -> Unit,
     onCreateButtonClicked : () -> Unit,
-    onSignInWithGoogleClicked : () -> Unit,
+    onSignUpWithGoogleClicked : () -> Unit,
     onNavigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ):Unit{
     Scaffold (
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.sign_up_action),
-                        textAlign = TextAlign.Center,
-                        color = DarkBlue,
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp,
-                        letterSpacing = 0.1.em
-                    )
-                },
+                title = {},
                 navigationIcon = {
                     IconButton(
                         onClick = onNavigateToSignIn
@@ -141,47 +126,28 @@ private fun SignUpScreenContent(
                 }
             )
         }
-    ){ paddingValues ->
-
+    ){
         Column(
-            modifier = modifier.fillMaxSize()
-                                .padding(paddingValues),
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                onClick = onSignInWithGoogleClicked ,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = DarkBlue,
-                    contentColor = Color.White
-                ),
-                border = BorderStroke(1.dp, DarkBlue)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ){
-                    Image(
-                        modifier = Modifier.size(25.dp),
-                        painter = painterResource(R.drawable.google_logo),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = null
-                    )
+            Text(
+                text = stringResource(R.string.sign_up_action),
+                textAlign = TextAlign.Center,
+                color = DarkBlue,
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                letterSpacing = 0.1.em
+            );
 
-                    Text(
-                        text = stringResource(R.string.sign_with_google_action),
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 15.sp,
-                        letterSpacing = 0.1.em
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(12.dp));
 
+            AuthWithGoogleButton(
+                label = R.string.sign_up_with_google_action,
+                onSignUpWithGoogleClicked
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -215,15 +181,14 @@ private fun SignUpScreenContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
+            SingleLineTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
                 value = state.email,
                 onValueChange = onEmailChange,
-                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                placeholder = { Text(text = stringResource(R.string.email_placeholder)) },
+                placeholder = R.string.email_placeholder,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -237,19 +202,17 @@ private fun SignUpScreenContent(
                             text = error.asString()
                         )
                     }
-                }
-            )
+                });
 
             Spacer(modifier = Modifier.height(8.dp));
 
-            OutlinedTextField(
+            SingleLineTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-                singleLine = true,
                 value = state.password,
                 onValueChange = onPasswordChange,
-                placeholder = { Text(text = stringResource(R.string.password_placeholder)) },
+                placeholder = R.string.password_placeholder,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
@@ -284,14 +247,13 @@ private fun SignUpScreenContent(
 
             Spacer(modifier = Modifier.height(8.dp));
 
-            OutlinedTextField(
+            SingleLineTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
-                singleLine = true,
                 value = state.confirmPassword,
                 onValueChange = onConfirmPasswordChange,
-                placeholder = { Text(text = "Confirm password") },
+                placeholder = R.string.confirm_password_placeholder,
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Lock,
@@ -311,33 +273,15 @@ private fun SignUpScreenContent(
 
             Spacer(modifier = Modifier.height(8.dp));
 
-            OutlinedButton(
+            LoadingButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp),
                 onClick = onCreateButtonClicked,
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = DarkBlue,
-                    contentColor = Color.White
-                ),
-                border = BorderStroke(1.dp, DarkBlue)
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.continue_text),
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 15.sp,
-                        letterSpacing = 0.1.em
-                    )
-                }
-            }
+                label = R.string.continue_text,
+                enabled = true,
+                isLoading = state.isLoading
+            )
 
             Spacer(modifier = Modifier.height(16.dp));
 
@@ -367,7 +311,7 @@ private fun SignUpScreenPreview():Unit{
             onEmailChange = {},
             onPasswordChange = {},
             onPasswordVisibilityChange = {},
-            onSignInWithGoogleClicked = {},
+            onSignUpWithGoogleClicked = {},
             onCreateButtonClicked = {},
             onConfirmPasswordChange = {},
             onNavigateToSignIn = {}
