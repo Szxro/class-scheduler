@@ -57,7 +57,7 @@
     <!--Top Bar Titles-->
     <string name="create_class_title">Create Class</string>
     <string name="delete_class_title">Delete Class</string>
-
+    <string name="update_class_title">Update Class</string>
 
     <!--Firebase Exception descriptions-->
     <string name="user_not_found_exception">User account not found. Please verify your credentials.</string>
