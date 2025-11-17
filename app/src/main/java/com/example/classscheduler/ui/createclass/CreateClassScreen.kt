@@ -194,6 +194,7 @@ private fun CreateClassScreenContent(
                     options = listOf("Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"),
                     label = "Select day(s)",
                     itemLabel = { day -> day },
+                    selected = state.schedule.map { it.day },
                     onSelectionChange = { selection -> onDaysChange(selection)}
                 );
 
