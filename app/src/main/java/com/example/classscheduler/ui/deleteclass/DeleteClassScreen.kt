@@ -117,7 +117,7 @@ fun DeleteClassScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ){
                 when{
@@ -166,7 +166,7 @@ private fun DeleteClassContentSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = androidx.compose.material3.CardDefaults.cardColors(
+            colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             )
         ) {
