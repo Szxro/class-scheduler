@@ -38,6 +38,8 @@ import com.example.classscheduler.ui.signin.SignInScreen
 import com.example.classscheduler.ui.signup.SignUpRoute
 import com.example.classscheduler.ui.signup.SignUpScreen
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
+import com.example.classscheduler.ui.updateclass.UpdateClassRoute
+import com.example.classscheduler.ui.updateclass.UpdateClassScreen
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 
@@ -187,7 +189,11 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true;
                                     }
                                 },
-                                openUpdateClassScreen = {},
+                                openUpdateClassScreen = {
+                                    navController.navigate(UpdateClassRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
                                 openDeleteClassScreen = {
                                     navController.navigate(DeleteClassRoute){
                                         launchSingleTop = true;
@@ -233,6 +239,23 @@ class MainActivity : ComponentActivity() {
                             DayScheduleScreen(
                                 openHomeScreen = {
                                     navController.navigate(HomeRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
+                            )
+                        }
+
+                        composable<UpdateClassRoute>{
+                            UpdateClassScreen(
+                                openManageClass = {
+                                    navController.navigate(ManageClassesRoute){
                                         launchSingleTop = true;
                                     }
                                 },
