@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import com.example.classscheduler.data.receivers.WeeklyScheduleBroadCast
 import com.example.classscheduler.domain.interfaces.AlarmSchedulerService
 import com.example.classscheduler.domain.models.AlarmItem
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,17 +24,18 @@ class AlarmSchedulerServiceImpl @Inject constructor(
 
         val triggerTime = getNextTriggerTime(dayOfTheWeek, localtime);
 
-        // TODO: this intent are going to be send to the receiver
-        val intent = Intent().apply {
+        val requestCode = generateRequestCode(dayOfTheWeek, localtime);
+
+        val intent = Intent(context, WeeklyScheduleBroadCast::class.java).apply {
             putExtra("title", title);
             putExtra("description", description);
-            putExtra("localtime", localtime);
+            putExtra("localtime", localtime)
             putExtra("dayOfTheWeek", dayOfTheWeek);
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            generateRequestCode(dayOfTheWeek, localtime),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // (already-exists / immutable)
         )
@@ -48,12 +50,13 @@ class AlarmSchedulerServiceImpl @Inject constructor(
     override fun cancelAlarm(item: AlarmItem) {
         val ( _, _, localtime, dayOfTheWeek ) = item;
 
-        // TODO: THIS INTENT ARE GOING TO REFERENCE THE RECEIVER
-        val intent = Intent();
+        val requestCode = generateRequestCode(dayOfTheWeek, localtime);
+
+        val intent = Intent(context, WeeklyScheduleBroadCast::class.java);
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            generateRequestCode(dayOfTheWeek, localtime),
+            requestCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         );
@@ -61,25 +64,29 @@ class AlarmSchedulerServiceImpl @Inject constructor(
         _alarmManager.cancel(pendingIntent);
     }
 
-    private fun getNextTriggerTime(dayOfTheWeek: DayOfWeek, time: LocalTime): Long {
-        // current datetime from the system clock
-        val now = LocalDateTime.now();
+    private fun getNextTriggerTime(dayOfWeek: DayOfWeek, time: LocalTime): Long {
+        // getting the current date time
+        val now = LocalDateTime.now()
 
-        // Its going to return a target time between the current datetime and the time and day of the week provided
-        val targetDateTime = LocalDateTime.of(now.toLocalDate(),time).with(dayOfTheWeek);
+        // getting the number value of the DayOfTheWeek ENUM
+        val todayDow = now.dayOfWeek.value;
+        val targetDow = dayOfWeek.value;
 
-        return if (targetDateTime.isBefore(now)){
-            targetDateTime
-                .plusWeeks(1) // its going to return a long that represent the target time but next week (the target time pass)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-        }else{
-            targetDateTime
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
+        // Calculate how many days ahead the target weekday is
+        val daysUntilTarget = when {
+            targetDow > todayDow -> targetDow - todayDow // The target date is LATER, within this same week.
+            targetDow < todayDow -> 7 - (todayDow - targetDow) // The target day has already passed this week.
+            else -> if (time.isAfter(now.toLocalTime())) 0 else 7 // today is the alarm day
         }
+
+        val targetDate = now.toLocalDate().plusDays(daysUntilTarget.toLong());
+
+        val targetDateTime = targetDate.atTime(time)
+
+        return targetDateTime
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
     }
 
     private fun generateRequestCode(dayOfWeek: DayOfWeek, time: LocalTime): Int {
