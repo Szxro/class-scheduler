@@ -27,6 +27,8 @@
     <string name="go_back_action">Go Back</string>
     <string name="logout_action">Logout</string>
     <string name="delete_class_action">Delete class</string>
+    <string name="configure_class_action">Configure class</string>
+    <string name="cancel_class_action">Cancel class</string>
 
     <!--Email Input-->
     <string name="email_placeholder">Email</string>
@@ -58,6 +60,7 @@
     <string name="create_class_title">Create Class</string>
     <string name="delete_class_title">Delete Class</string>
     <string name="update_class_title">Update Class</string>
+    <string name="configure_class_title">Configure Class</string>
 
     <!--Firebase Exception descriptions-->
     <string name="user_not_found_exception">User account not found. Please verify your credentials.</string>
