@@ -21,6 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.classscheduler.core.utils.ext.showMessage
 import com.example.classscheduler.data.datasource.AuthRemoteDataSource
+import com.example.classscheduler.ui.configureclass.ConfigureClassRoute
+import com.example.classscheduler.ui.configureclass.ConfigureClassScreen
 import com.example.classscheduler.ui.createclass.CreateClassRoute
 import com.example.classscheduler.ui.createclass.CreateClassScreen
 import com.example.classscheduler.ui.dayschedule.DayScheduleRoute
@@ -199,7 +201,11 @@ class MainActivity : ComponentActivity() {
                                         launchSingleTop = true;
                                     }
                                 },
-                                openConfigureClassScreen = {},
+                                openConfigureClassScreen = {
+                                    navController.navigate(ConfigureClassRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
                             );
                         }
                         composable<CreateClassRoute>{
@@ -255,6 +261,23 @@ class MainActivity : ComponentActivity() {
                         composable<UpdateClassRoute>{
                             UpdateClassScreen(
                                 openManageClass = {
+                                    navController.navigate(ManageClassesRoute){
+                                        launchSingleTop = true;
+                                    }
+                                },
+                                showSnackBar = { text ->
+                                    snackBarHostState.showMessage(
+                                        text,
+                                        this@MainActivity,
+                                        scope,
+                                    )
+                                }
+                            )
+                        }
+
+                        composable<ConfigureClassRoute>{
+                            ConfigureClassScreen(
+                                onNavigateToManageClass = {
                                     navController.navigate(ManageClassesRoute){
                                         launchSingleTop = true;
                                     }
