@@ -7,4 +7,8 @@ sealed class ConfigureClassIntent : UiIntent {
     data class OnSelectedClassChange(val selectedClass: Class) : ConfigureClassIntent();
 
     object OnConfigure : ConfigureClassIntent();
+
+    object OnCancel : ConfigureClassIntent();
+
+    object OnNavigateToManageClass : ConfigureClassIntent();
 }

@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
+import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
-import com.example.classscheduler.core.ui.UiText
+import com.example.classscheduler.core.ui.UiEvent.*
+import com.example.classscheduler.core.ui.UiText.*
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.ext.toLocalTime
 import com.example.classscheduler.core.utils.helpers.getCurrentDay
@@ -55,48 +57,76 @@ class ConfigureClassViewModel @Inject constructor(
 
                 if (!validationResult.values.all { it.isValid }) return;
 
+                handleConfigure(isConfigured = true);
+            }
+
+            ConfigureClassIntent.OnNavigateToManageClass -> {
                 viewModelScope.launch {
-                    _state.update { currentState -> currentState.copy(isLoading = true) };
-
-                    // Setting up the alarms
-                    val className = _state.value.selectedClass!!.name;
-
-                    val alarmItems = _state.value.selectedClass!!.schedule.map { schedule ->
-                        AlarmItem(
-                            title = "Class reminder: $className",
-                            description = "Starts on ${schedule.day} at ${
-                                schedule.startTimeLong!!.toLocalTime().format(
-                                    DateTimeFormatter.ofPattern("h:mm a")
-                                )
-                            }",
-                            localTime = schedule.startTimeLong.toLocalTime().minusMinutes(15),
-                            dayOfWeek = getCurrentDay(schedule.day)
-                        )
-                    }
-
-                    alarmItems.forEach { item ->  alarmSchedulerService.scheduleWeeklyAlarm(item) };
-
-                    // updating the class item
-                    val result = classRepository.update(_state.value.selectedClass!!.copy(configured = true));
-
-                    result.match(
-                        onSuccess = {
-                            channel.apply {
-                                send(UiEvent.ShowSnackBar(UiText.DynamicString("ALARM CONFIGURED!!!!")));
-                                loadClasses();
-                            }
-                        },
-                        onFailure = { error ->
-                            channel.send(UiEvent.ShowSnackBar(error.message));
-                        }
-                    )
-
-                    _state.update { currentState -> currentState.copy(isLoading = false) };
+                    channel.send(Navigate(Screen.ManageClasses));
                 }
+            }
+
+            ConfigureClassIntent.OnCancel -> {
+                val validationResult = validator!!.validate(_state.value);
+
+                _state.update { currentState ->
+                    currentState.copy(
+                        selectedClassHasError = validationResult["selected-class"]?.errorMessage
+                    )
+                }
+
+                if (!validationResult.values.all { it.isValid }) return;
+
+                handleConfigure(isConfigured = false);
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.S)
+    private fun handleConfigure(isConfigured: Boolean) {
+        val alarmMessage = if (isConfigured) "ALARM CONFIGURED!!!" else "ALARM CANCEL!!!";
 
+        val className = _state.value.selectedClass!!.name;
+
+        val alarmItems = _state.value.selectedClass!!.schedule.map { schedule ->
+            AlarmItem(
+                title = "Class reminder: $className",
+                description = "Starts on ${schedule.day} at ${
+                    schedule.startTimeLong!!.toLocalTime().format(
+                        DateTimeFormatter.ofPattern("h:mm a")
+                    )
+                }",
+                localTime = schedule.startTimeLong.toLocalTime().minusMinutes(15),
+                dayOfWeek = getCurrentDay(schedule.day)
+            )
+        }
+
+        if(isConfigured){
+            alarmItems.forEach{item -> alarmSchedulerService.scheduleWeeklyAlarm(item)}
+        }else{
+            alarmItems.forEach { item ->  alarmSchedulerService.cancelAlarm(item) }
+        }
+
+        viewModelScope.launch {
+            _state.update { currentState -> currentState.copy(isLoading = true) };
+
+            val result = classRepository.update(_state.value.selectedClass!!.copy(configured = isConfigured));
+
+            result.match(
+                onSuccess = {
+                    channel.apply {
+                        send(ShowSnackBar(DynamicString(alarmMessage)))
+                        _state.update { currentState -> currentState.copy(selectedClass = null) }
+                    };
+                },
+                onFailure = { error ->
+                    channel.send(ShowSnackBar(error.message));
+                }
+            )
+
+            _state.update { currentState -> currentState.copy(isLoading = false) };
+        }
+        loadClasses();
+    }
     private fun loadClasses(): Unit {
         viewModelScope.launch {
             _state.update { currentState -> currentState.copy(isLoading = true) };
