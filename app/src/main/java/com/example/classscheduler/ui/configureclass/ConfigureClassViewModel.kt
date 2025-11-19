@@ -69,7 +69,7 @@ class ConfigureClassViewModel @Inject constructor(
                                     DateTimeFormatter.ofPattern("h:mm a")
                                 )
                             }",
-                            localTime = schedule.startTimeLong.toLocalTime(),
+                            localTime = schedule.startTimeLong.toLocalTime().minusMinutes(15),
                             dayOfWeek = getCurrentDay(schedule.day)
                         )
                     }
