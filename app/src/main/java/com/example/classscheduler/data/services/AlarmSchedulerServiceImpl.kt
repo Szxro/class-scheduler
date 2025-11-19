@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.classscheduler.data.receivers.WeeklyScheduleBroadCast
 import com.example.classscheduler.domain.interfaces.AlarmSchedulerService
 import com.example.classscheduler.domain.models.AlarmItem
@@ -13,24 +15,28 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AlarmSchedulerServiceImpl @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) : AlarmSchedulerService {
     private val _alarmManager = context.getSystemService(AlarmManager::class.java);
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun scheduleWeeklyAlarm(item: AlarmItem) {
         val (title, description, localtime, dayOfTheWeek) = item;
 
-        val triggerTime = getNextTriggerTime(dayOfTheWeek, localtime);
+        val triggerTime = getNextTriggerTime(dayOfTheWeek,localtime);
+
+        //(Its going to be execute in five seconds)
+        //val triggerTime = System.currentTimeMillis() + 5000;
 
         val requestCode = generateRequestCode(dayOfTheWeek, localtime, title);
 
         val intent = Intent(context, WeeklyScheduleBroadCast::class.java).apply {
             putExtra("title", title);
             putExtra("description", description);
-            putExtra("localtime", localtime)
-            putExtra("dayOfTheWeek", dayOfTheWeek);
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -40,7 +46,7 @@ class AlarmSchedulerServiceImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE // (already-exists / immutable)
         )
 
-        _alarmManager.setAndAllowWhileIdle(
+        _alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP, // if going to wake up the device
             triggerTime,
             pendingIntent
@@ -81,9 +87,9 @@ class AlarmSchedulerServiceImpl @Inject constructor(
 
         val targetDate = now.toLocalDate().plusDays(daysUntilTarget.toLong());
 
-        val targetDateTime = targetDate.atTime(time)
+        val targetDateTime = targetDate.atTime(time) // LocalDateTime (have date, month, year)
 
-        return targetDateTime
+        return targetDateTime // Long -> to LocalTime (hour - minutes AM/PM)
             .atZone(ZoneId.systemDefault())
             .toInstant()
             .toEpochMilli()
