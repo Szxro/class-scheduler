@@ -1,7 +1,7 @@
 package com.example.classscheduler.core.utils.helpers
 
 import android.icu.util.Calendar
-
+import java.time.DayOfWeek
 fun getCurrentDay():String{
     val calendar = Calendar.getInstance();
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -18,4 +18,19 @@ fun getCurrentDay():String{
     }
 
     return day;
+}
+
+fun getCurrentDay(day: String): DayOfWeek{
+    val dayOfTheWeek = when(day){
+        "Monday" -> DayOfWeek.MONDAY
+        "Tuesday" -> DayOfWeek.TUESDAY
+        "Wednesday" -> DayOfWeek.WEDNESDAY
+        "Thursday" -> DayOfWeek.THURSDAY
+        "Friday" -> DayOfWeek.FRIDAY
+        "Saturday" -> DayOfWeek.SATURDAY
+        "Sunday" -> DayOfWeek.SUNDAY
+        else -> throw IllegalArgumentException("Invalid day name: $day")
+    }
+
+    return dayOfTheWeek
 }
