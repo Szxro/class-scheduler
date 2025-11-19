@@ -31,10 +31,12 @@ class WeeklyScheduleBroadCast : BroadcastReceiver() {
             intent.getSerializableExtra("localtime") as? LocalTime
         } ?: return;
 
-        val dayOfTheWeekValue = intent.getIntExtra("dayOfTheWeek", 0);
+        val dowValue = intent.getIntExtra("dayOfTheWeek", -1);
+
+        if (dowValue !in 1..7) return
 
         // Obtaining a day of the week of the given value
-        val dayOfTheWeek = DayOfWeek.of(dayOfTheWeekValue);
+        val dayOfTheWeek = DayOfWeek.of(dowValue)
 
         // show notification
         notificationService.showNotification(title, description);

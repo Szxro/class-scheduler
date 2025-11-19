@@ -20,11 +20,11 @@ class AlarmSchedulerServiceImpl @Inject constructor(
     private val _alarmManager = context.getSystemService(AlarmManager::class.java);
 
     override fun scheduleWeeklyAlarm(item: AlarmItem) {
-        val ( title, description , localtime, dayOfTheWeek ) = item;
+        val (title, description, localtime, dayOfTheWeek) = item;
 
         val triggerTime = getNextTriggerTime(dayOfTheWeek, localtime);
 
-        val requestCode = generateRequestCode(dayOfTheWeek, localtime);
+        val requestCode = generateRequestCode(dayOfTheWeek, localtime, title);
 
         val intent = Intent(context, WeeklyScheduleBroadCast::class.java).apply {
             putExtra("title", title);
@@ -48,9 +48,9 @@ class AlarmSchedulerServiceImpl @Inject constructor(
     }
 
     override fun cancelAlarm(item: AlarmItem) {
-        val ( _, _, localtime, dayOfTheWeek ) = item;
+        val (title, _, localtime, dayOfTheWeek) = item;
 
-        val requestCode = generateRequestCode(dayOfTheWeek, localtime);
+        val requestCode = generateRequestCode(dayOfTheWeek, localtime, title);
 
         val intent = Intent(context, WeeklyScheduleBroadCast::class.java);
 
@@ -89,7 +89,8 @@ class AlarmSchedulerServiceImpl @Inject constructor(
             .toEpochMilli()
     }
 
-    private fun generateRequestCode(dayOfWeek: DayOfWeek, time: LocalTime): Int {
-        return dayOfWeek.value * 10000 + time.hour * 100 + time.minute;
+    private fun generateRequestCode(dayOfWeek: DayOfWeek, time: LocalTime, title: String): Int {
+        // Avoid collisions across classes with the same schedule
+        return dayOfWeek.value * 10000 + time.hour * 100 + time.minute + title.hashCode();
     }
 }
