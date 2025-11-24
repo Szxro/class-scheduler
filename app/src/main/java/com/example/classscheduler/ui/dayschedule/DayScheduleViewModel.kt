@@ -1,6 +1,5 @@
 package com.example.classscheduler.ui.dayschedule
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
@@ -8,8 +7,8 @@ import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.utils.ext.match
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
-import com.example.classscheduler.data.repository.ClassRepositoryImpl
+import com.example.classscheduler.domain.interfaces.AuthRepository
+import com.example.classscheduler.domain.interfaces.ClassRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +19,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class DayScheduleViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val classRepository: ClassRepositoryImpl,
-    private val authRepositoryImpl: AuthRepositoryImpl
+    private val classRepository: ClassRepository,
+    private val authRepositoryImpl: AuthRepository
 ) : BaseViewModel<DayScheduleIntent, DayScheduleState>() {
     private val _state = MutableStateFlow(DayScheduleState())
 

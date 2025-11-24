@@ -10,9 +10,6 @@ import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.ext.toLocalTime
 import com.example.classscheduler.core.utils.helpers.getCurrentDay
 import com.example.classscheduler.core.utils.validation.validators.ConfigureClassValidator
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
-import com.example.classscheduler.data.repository.ClassRepositoryImpl
-import com.example.classscheduler.data.services.AlarmSchedulerServiceImpl
 import com.example.classscheduler.domain.models.AlarmItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,12 +19,15 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import com.example.classscheduler.R;
+import com.example.classscheduler.domain.interfaces.AlarmSchedulerService
+import com.example.classscheduler.domain.interfaces.AuthRepository
+import com.example.classscheduler.domain.interfaces.ClassRepository
 
 @HiltViewModel
 class ConfigureClassViewModel @Inject constructor(
-    private val classRepository: ClassRepositoryImpl,
-    private val authRepository: AuthRepositoryImpl,
-    private val alarmSchedulerService: AlarmSchedulerServiceImpl
+    private val classRepository: ClassRepository,
+    private val authRepository: AuthRepository,
+    private val alarmSchedulerService: AlarmSchedulerService
 ) : BaseViewModel<ConfigureClassIntent, ConfigureClassState>() {
     private val _state = MutableStateFlow(ConfigureClassState());
 

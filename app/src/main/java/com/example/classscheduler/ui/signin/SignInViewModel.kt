@@ -2,31 +2,21 @@ package com.example.classscheduler.ui.signin
 
 import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
-import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.match
-import com.example.classscheduler.domain.errors.AuthError
-import com.example.classscheduler.R;
 import com.example.classscheduler.core.ui.UiEvent.*
-import com.example.classscheduler.core.ui.UiText.*
-import com.example.classscheduler.ui.signin.SignInIntent
 import com.example.classscheduler.core.ui.Screen
-import com.example.classscheduler.core.utils.validation.guards.Guard
-import com.example.classscheduler.core.utils.validation.guards.blankOrNull
-import com.example.classscheduler.core.utils.validation.guards.pattern
-import com.example.classscheduler.core.utils.constants.PatternConstants
-import com.example.classscheduler.core.utils.ext.validateAll
 import com.example.classscheduler.core.utils.validation.validators.SignInValidator
+import com.example.classscheduler.domain.interfaces.AuthRepository
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val authRepository: AuthRepositoryImpl,
+    private val authRepository: AuthRepository,
 ) : BaseViewModel<SignInIntent, SignInState>() {
     private val _state = MutableStateFlow(SignInState());
 

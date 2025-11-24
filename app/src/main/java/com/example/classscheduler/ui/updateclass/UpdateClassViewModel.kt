@@ -7,8 +7,6 @@ import com.example.classscheduler.core.ui.UiEvent.*
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.validation.validators.UpdateClassValidator
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
-import com.example.classscheduler.data.repository.ClassRepositoryImpl
 import com.example.classscheduler.domain.models.Schedule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -17,11 +15,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.example.classscheduler.R;
+import com.example.classscheduler.domain.interfaces.AuthRepository
+import com.example.classscheduler.domain.interfaces.ClassRepository
 
 @HiltViewModel
 class UpdateClassViewModel @Inject constructor(
-    private val classRepository: ClassRepositoryImpl, // TODO: MAKE MODULES TO INJECT THE REPOSITORY INTERFACE NOT THE IMPLEMENTATION
-    private val authRepository: AuthRepositoryImpl
+    private val classRepository: ClassRepository,
+    private val authRepository: AuthRepository
 ): BaseViewModel<UpdateClassIntent, UpdateClassState>(){
     private val _state = MutableStateFlow(UpdateClassState());
 

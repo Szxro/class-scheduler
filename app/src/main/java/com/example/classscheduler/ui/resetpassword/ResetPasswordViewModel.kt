@@ -3,7 +3,6 @@ package com.example.classscheduler.ui.resetpassword
 import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.UiText
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,11 +13,12 @@ import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.validation.validators.ResetPasswordValidator
+import com.example.classscheduler.domain.interfaces.AuthRepository
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ResetPasswordViewModel @Inject constructor(
-    private val authRepository: AuthRepositoryImpl
+    private val authRepository: AuthRepository
 ): BaseViewModel<ResetPasswordIntent, ResetPasswordState>() {
     private val _state = MutableStateFlow(ResetPasswordState());
 

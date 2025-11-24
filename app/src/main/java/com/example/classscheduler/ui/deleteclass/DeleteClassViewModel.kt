@@ -8,8 +8,8 @@ import com.example.classscheduler.core.ui.UiEvent.*
 import com.example.classscheduler.core.ui.UiText
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.validation.validators.DeleteClassValidator
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
-import com.example.classscheduler.data.repository.ClassRepositoryImpl
+import com.example.classscheduler.domain.interfaces.AuthRepository
+import com.example.classscheduler.domain.interfaces.ClassRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,8 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DeleteClassViewModel @Inject constructor(
-    private val authRepository: AuthRepositoryImpl,
-    private val classRepository: ClassRepositoryImpl
+    private val authRepository: AuthRepository,
+    private val classRepository: ClassRepository
 ) : BaseViewModel<DeleteClassIntent, DeleteClassState>() {
     private val _state: MutableStateFlow<DeleteClassState> = MutableStateFlow(DeleteClassState());
 

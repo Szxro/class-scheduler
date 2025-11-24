@@ -1,7 +1,6 @@
 package com.example.classscheduler.ui.signup
 
 import androidx.lifecycle.viewModelScope
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,12 +13,13 @@ import com.example.classscheduler.core.ui.UiEvent.ShowSnackBar
 import com.example.classscheduler.core.ui.UiText.StringResource
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.validation.validators.SignUpValidator
+import com.example.classscheduler.domain.interfaces.AuthRepository
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val auth: AuthRepositoryImpl
+    private val auth: AuthRepository
 ) : BaseViewModel<SignUpIntent, SignUpState>() {
     private val _state = MutableStateFlow(SignUpState());
 

@@ -7,8 +7,8 @@ import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiEvent.*
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.helpers.getCurrentDay
-import com.example.classscheduler.data.repository.AuthRepositoryImpl
-import com.example.classscheduler.data.repository.ClassRepositoryImpl
+import com.example.classscheduler.domain.interfaces.AuthRepository
+import com.example.classscheduler.domain.interfaces.ClassRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val authRemoteDataSource: AuthRepositoryImpl,
-    private val classRepository: ClassRepositoryImpl
+    private val authRemoteDataSource: AuthRepository,
+    private val classRepository: ClassRepository
 ) : BaseViewModel<HomeIntent, HomeState>() {
     private val _state = MutableStateFlow(HomeState());
 
