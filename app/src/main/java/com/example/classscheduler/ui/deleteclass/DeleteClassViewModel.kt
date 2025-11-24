@@ -3,10 +3,9 @@ package com.example.classscheduler.ui.deleteclass
 import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.Screen
-import com.example.classscheduler.core.ui.UiEvent
+import com.example.classscheduler.R;
 import com.example.classscheduler.core.ui.UiEvent.*
 import com.example.classscheduler.core.ui.UiText
-import com.example.classscheduler.core.ui.UiText.*
 import com.example.classscheduler.core.utils.ext.match
 import com.example.classscheduler.core.utils.validation.validators.DeleteClassValidator
 import com.example.classscheduler.data.repository.AuthRepositoryImpl
@@ -60,11 +59,9 @@ class DeleteClassViewModel @Inject constructor(
 
                     result.match(
                         onSuccess = {
-                            channel.apply {
-                                send(ShowSnackBar(DynamicString("CLASS DELETED!!!!")));
-                                _state.update { currentState -> currentState.copy(selectedClass = null) }
-                                loadClasses();
-                            }
+                            channel.send(ShowSnackBar(UiText.StringResource(R.string.class_deleted)));
+                            _state.update { currentState -> currentState.copy(selectedClass = null) }
+                            loadClasses();
                         },
                         onFailure = { error ->
                             channel.send(ShowSnackBar(error.message))

@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.configureclass
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewModelScope
 import com.example.classscheduler.core.common.BaseViewModel
 import com.example.classscheduler.core.ui.Screen
@@ -23,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import com.example.classscheduler.R;
 
 @HiltViewModel
 class ConfigureClassViewModel @Inject constructor(
@@ -39,51 +38,36 @@ class ConfigureClassViewModel @Inject constructor(
         loadClasses();
     }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onIntent(intent: ConfigureClassIntent) {
         when (intent) {
-            is ConfigureClassIntent.OnSelectedClassChange -> {
-                _state.update { currentState -> currentState.copy(selectedClass = intent.selectedClass) }
-            }
-
-            ConfigureClassIntent.OnConfigure -> {
-                val validationResult = validator!!.validate(_state.value);
-
-                _state.update { currentState ->
-                    currentState.copy(
-                        selectedClassHasError = validationResult["selected-class"]?.errorMessage
-                    )
-                }
-
-                if (!validationResult.values.all { it.isValid }) return;
-
-                handleConfigure(isConfigured = true);
-            }
-
             ConfigureClassIntent.OnNavigateToManageClass -> {
                 viewModelScope.launch {
                     channel.send(Navigate(Screen.ManageClasses));
                 }
             }
 
-            ConfigureClassIntent.OnCancel -> {
-                val validationResult = validator!!.validate(_state.value);
-
-                _state.update { currentState ->
-                    currentState.copy(
-                        selectedClassHasError = validationResult["selected-class"]?.errorMessage
-                    )
-                }
-
-                if (!validationResult.values.all { it.isValid }) return;
-
-                handleConfigure(isConfigured = false);
+            is ConfigureClassIntent.OnSelectedClassChange -> {
+                _state.update { currentState -> currentState.copy(selectedClass = intent.selectedClass) }
             }
+
+            ConfigureClassIntent.OnConfigure -> handleConfigure(isConfigured = true);
+
+            ConfigureClassIntent.OnCancel -> handleConfigure(isConfigured = false);
         }
     }
-    @RequiresApi(Build.VERSION_CODES.S)
+
     private fun handleConfigure(isConfigured: Boolean) {
-        val alarmMessage = if (isConfigured) "ALARM CONFIGURED!!!" else "ALARM CANCEL!!!";
+        val validationResult = validator!!.validate(_state.value);
+
+        _state.update { currentState ->
+            currentState.copy(
+                selectedClassHasError = validationResult["selected-class"]?.errorMessage
+            )
+        }
+
+        if (!validationResult.values.all { it.isValid }) return;
+
+        val alarmMessage = if (isConfigured) StringResource(R.string.alarm_configured) else StringResource(R.string.alarm_configured);
 
         val className = _state.value.selectedClass!!.name;
 
@@ -113,10 +97,9 @@ class ConfigureClassViewModel @Inject constructor(
 
             result.match(
                 onSuccess = {
-                    channel.apply {
-                        send(ShowSnackBar(DynamicString(alarmMessage)))
-                        _state.update { currentState -> currentState.copy(selectedClass = null) }
-                    };
+                    channel.send(ShowSnackBar(alarmMessage))
+
+                    _state.update { currentState -> currentState.copy(selectedClass = null) }
                 },
                 onFailure = { error ->
                     channel.send(ShowSnackBar(error.message));

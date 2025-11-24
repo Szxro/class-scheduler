@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.configureclass
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -53,8 +51,6 @@ import java.time.format.DateTimeFormatter
 @Serializable
 object ConfigureClassRoute
 
-
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ConfigureClassScreen(
     onNavigateToManageClass: () -> Unit,
@@ -86,7 +82,6 @@ fun ConfigureClassScreen(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfigureClassScreenContent(
@@ -139,7 +134,6 @@ fun ConfigureClassScreenContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 private fun ConfigureClassContentSection(
     state: ConfigureClassState,
@@ -208,8 +202,6 @@ private fun ConfigureClassContentSection(
         }
     }
 }
-
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ClassInfoPreview(classItem: Class) {
     Card(
@@ -294,7 +286,6 @@ private fun EmptyClasses(): Unit {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
 fun ConfigureClassScreenPreview(): Unit{

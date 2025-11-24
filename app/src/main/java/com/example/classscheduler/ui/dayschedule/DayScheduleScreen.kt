@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.dayschedule
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,7 +60,6 @@ import java.time.format.DateTimeFormatter
 @Serializable
 data class DayScheduleRoute(val day: String);
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun  DayScheduleScreen(
     openHomeScreen: () -> Unit,
@@ -91,7 +88,6 @@ fun  DayScheduleScreen(
     );
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DayScheduleScreenContent(
@@ -137,7 +133,7 @@ private fun DayScheduleScreenContent(
     }
 }
 
-
+// TODD: REFACTOR COMPONENTS TO MAKE IT MORE REUSABLE
 @Composable
 private fun LoadingIndicator(day: String): Unit {
     Column(
@@ -178,7 +174,6 @@ private fun EmptyDayClassSection(day: String): Unit {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 private fun ClassesListSection(classes: List<Class>) {
     LazyColumn(
@@ -241,7 +236,6 @@ private fun ClassesListSection(classes: List<Class>) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ScheduleItem(schedule: Schedule) {
     Column(
@@ -312,7 +306,6 @@ fun ScheduleTimeRow(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
 private fun DayScheduleScreenPreview(): Unit{

@@ -25,10 +25,6 @@ class HomeViewModel @Inject constructor(
 
     val state = _state.asStateFlow();
 
-    val days = listOf(
-        "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
-    );
-
     init {
         viewModelScope.launch {
             _state.update { currentState -> currentState.copy(isLoading = true) };

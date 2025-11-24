@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.createclass
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +42,7 @@ import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import kotlinx.serialization.Serializable
 import com.example.classscheduler.R;
 import com.example.classscheduler.core.ui.UiText
+import com.example.classscheduler.core.utils.constants.DateConstants
 import com.example.classscheduler.ui.shared.ScheduleRow
 import com.example.classscheduler.ui.shared.SingleLineTextField
 import com.example.classscheduler.ui.shared.SingleSelectDropDown
@@ -52,7 +51,6 @@ import com.example.classscheduler.ui.shared.SingleSelectDropDown
 @Serializable
 object CreateClassRoute
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun CreateClassScreen(
     openManageClassesScreen: () -> Unit,
@@ -90,7 +88,6 @@ fun CreateClassScreen(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CreateClassScreenContent(
@@ -191,7 +188,7 @@ private fun CreateClassScreenContent(
                 )
 
                 SelectableDropdownMenu(
-                    options = listOf("Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"),
+                    options = DateConstants.DAYS_OF_THE_WEEK,
                     label = "Select day(s)",
                     itemLabel = { day -> day },
                     selected = state.schedule.map { it.day },
@@ -231,7 +228,6 @@ private fun CreateClassScreenContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
 private fun CreateClassScreenPreview(): Unit {

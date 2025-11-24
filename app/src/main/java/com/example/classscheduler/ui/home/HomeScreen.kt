@@ -72,6 +72,7 @@ import com.example.classscheduler.core.utils.ext.ObserveEventsAs
 import com.example.classscheduler.ui.theme.ClassSchedulerTheme
 import kotlinx.coroutines.launch
 import com.example.classscheduler.R;
+import com.example.classscheduler.core.utils.constants.DateConstants
 import com.example.classscheduler.core.utils.ext.toLocalTime
 import com.example.classscheduler.domain.models.Class
 import com.example.classscheduler.domain.models.Schedule
@@ -80,7 +81,6 @@ import java.time.format.DateTimeFormatter
 @Serializable
 object HomeRoute;
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun HomeScreen(
     openSignInScreen: () -> Unit,
@@ -108,20 +108,16 @@ fun HomeScreen(
     }
     HomeScreenContent(
         state,
-        days = homeViewModel.days,
         onLogoutClicked = { homeViewModel.onIntent(HomeIntent.OnLogoOut) },
         onManageClassesClicked = { homeViewModel.onIntent(HomeIntent.OnManageClassesClicked) },
         onNavigateToDayScheduleScreen = {day -> homeViewModel.onIntent(HomeIntent.OnNavigateToDaySchedule(day))},
         modifier
     );
 }
-
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenContent(
     state: HomeState,
-    days: List<String>,
     onLogoutClicked: () -> Unit,
     onManageClassesClicked: () -> Unit,
     onNavigateToDayScheduleScreen: (String) -> Unit,
@@ -215,7 +211,7 @@ private fun HomeScreenContent(
                         modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
                     )
 
-                    days.forEach { day ->
+                    DateConstants.DAYS_OF_THE_WEEK.forEach { day ->
                         NavigationDrawerItem(
                             label = { Text(day) },
                             selected = false,
@@ -371,7 +367,6 @@ private fun EmptyClassSection(): Unit {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 private fun ClassesListSection(classes: List<Class>) {
     LazyColumn(
@@ -434,7 +429,6 @@ private fun ClassesListSection(classes: List<Class>) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ScheduleItem(schedule: Schedule) {
     Column(
@@ -512,7 +506,6 @@ private fun HomeScreenPreview(): Unit {
     ClassSchedulerTheme(darkTheme = true) {
         HomeScreenContent(
             state = HomeState(),
-            days = emptyList(),
             onLogoutClicked = {},
             onManageClassesClicked = {},
             onNavigateToDayScheduleScreen = {}

@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.shared
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +21,6 @@ import com.example.classscheduler.core.utils.ext.toLocalTime
 import com.example.classscheduler.domain.models.Schedule
 import java.time.LocalTime
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleRow(

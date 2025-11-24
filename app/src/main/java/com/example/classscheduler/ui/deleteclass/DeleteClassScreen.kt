@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.deleteclass
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -52,7 +50,6 @@ import java.time.format.DateTimeFormatter
 @Serializable
 object DeleteClassRoute
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun DeleteClassScreen(
     openManageClass : () -> Unit,
@@ -83,7 +80,6 @@ fun DeleteClassScreen(
     );
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteClassScreenContent(
@@ -151,7 +147,6 @@ private fun LoadingIndicator(): Unit {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 private fun DeleteClassContentSection(
     state: DeleteClassState,
@@ -218,7 +213,6 @@ private fun DeleteClassContentSection(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ClassInfoPreview(classItem: Class) {
   Card(
@@ -288,7 +282,6 @@ private fun EmptyClasses(): Unit {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
 fun DeleteClassScreenPreview():Unit{

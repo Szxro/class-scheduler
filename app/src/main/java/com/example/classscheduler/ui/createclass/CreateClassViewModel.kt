@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.classscheduler.R;
 
 @HiltViewModel
 class CreateClassViewModel @Inject constructor(
     private val classRepository: ClassRepositoryImpl,
     private val authRepositoryImpl: AuthRepositoryImpl
-)
-    : BaseViewModel<CreateClassIntent, CreateClassState>() {
+): BaseViewModel<CreateClassIntent, CreateClassState>() {
     private val _state = MutableStateFlow(CreateClassState());
 
     val state = _state.asStateFlow();
@@ -104,11 +104,9 @@ class CreateClassViewModel @Inject constructor(
 
                     result.match(
                         onSuccess = {
-                            channel.apply {
-                                send(ShowSnackBar(UiText.DynamicString("CLASS CREATED!!!")));
+                            channel.send(ShowSnackBar(UiText.StringResource(R.string.class_created)));
 
-                                _state.value = CreateClassState() // Resetting the state
-                            }
+                            _state.value = CreateClassState();
                         },
                         onFailure = { error ->
                             channel.send(ShowSnackBar(error.message))

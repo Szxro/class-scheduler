@@ -16,10 +16,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.example.classscheduler.R;
 
 @HiltViewModel
 class UpdateClassViewModel @Inject constructor(
-    private val classRepository: ClassRepositoryImpl,
+    private val classRepository: ClassRepositoryImpl, // TODO: MAKE MODULES TO INJECT THE REPOSITORY INTERFACE NOT THE IMPLEMENTATION
     private val authRepository: AuthRepositoryImpl
 ): BaseViewModel<UpdateClassIntent, UpdateClassState>(){
     private val _state = MutableStateFlow(UpdateClassState());
@@ -35,7 +36,7 @@ class UpdateClassViewModel @Inject constructor(
         when(intent) {
             UpdateClassIntent.OnNavigateToManageClasses -> {
                 viewModelScope.launch {
-                    channel.send(Navigate(Screen.ManageClasses));
+                    channel.send(Navigate(Screen.ManageClasses)); // TODO: MAKE HANDLERS TO REDUCE THE SIZE OF THE onIntent method
                 }
             }
 
@@ -104,11 +105,9 @@ class UpdateClassViewModel @Inject constructor(
 
                     result.match(
                         onSuccess = {
-                            channel.apply {
-                                send(ShowSnackBar(UiText.DynamicString("CLASS UPDATED!!!")));
-                                _state.update { currentState -> currentState.copy(selectedClass = null) }
-                                loadClasses();
-                            }
+                            channel.send(ShowSnackBar(UiText.StringResource(R.string.class_updated)));
+                            _state.update { currentState -> currentState.copy(selectedClass = null) };
+                            loadClasses();
                         },
                         onFailure = { error ->
                             channel.send(ShowSnackBar(error.message));

@@ -1,7 +1,6 @@
 package com.example.classscheduler.ui.createclass
 
 import com.example.classscheduler.core.ui.UiIntent
-import java.time.LocalTime
 
 sealed class CreateClassIntent : UiIntent {
 

@@ -1,7 +1,5 @@
 package com.example.classscheduler.ui.updateclass
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +45,7 @@ import com.example.classscheduler.R
 import com.example.classscheduler.core.ui.Screen
 import com.example.classscheduler.core.ui.UiEvent
 import com.example.classscheduler.core.ui.UiText
+import com.example.classscheduler.core.utils.constants.DateConstants
 import com.example.classscheduler.core.utils.ext.ObserveEventsAs
 import com.example.classscheduler.domain.models.Class
 import com.example.classscheduler.ui.shared.ScheduleRow
@@ -59,7 +58,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 object UpdateClassRoute
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun UpdateClassScreen(
     openManageClass: () -> Unit,
@@ -95,8 +93,6 @@ fun UpdateClassScreen(
         onScheduleChange = { day, start, end -> updateClassViewModel.onIntent(UpdateClassIntent.OnScheduleChange(day, start,end)) }
     );
 }
-
-@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UpdateClassScreenContent(
@@ -159,7 +155,6 @@ private fun UpdateClassScreenContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 private fun UpdateClassContentSection(
     state: UpdateClassState,
@@ -269,7 +264,7 @@ private fun UpdateClassContentSection(
                     )
 
                     SelectableDropdownMenu(
-                        options = listOf("Monday", "Tuesday", "Wednesday","Thursday","Friday","Saturday","Sunday"),
+                        options = DateConstants.DAYS_OF_THE_WEEK,
                         label = "Select day(s)",
                         selected = state.selectedClass.schedule.map { it.day },
                         itemLabel = { day -> day },
@@ -352,7 +347,6 @@ private fun EmptyClasses(): Unit {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.S)
 @Preview(showSystemUi = true)
 @Composable
 private fun UpdateClassScreenPreview():Unit{
