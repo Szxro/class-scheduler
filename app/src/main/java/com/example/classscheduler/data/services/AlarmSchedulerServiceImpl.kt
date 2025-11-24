@@ -4,8 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.classscheduler.data.receivers.WeeklyScheduleBroadCast
 import com.example.classscheduler.domain.interfaces.AlarmSchedulerService
 import com.example.classscheduler.domain.models.AlarmItem
@@ -23,14 +21,10 @@ class AlarmSchedulerServiceImpl @Inject constructor(
 ) : AlarmSchedulerService {
     private val _alarmManager = context.getSystemService(AlarmManager::class.java);
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun scheduleWeeklyAlarm(item: AlarmItem) {
         val (title, description, localtime, dayOfTheWeek) = item;
 
         val triggerTime = getNextTriggerTime(dayOfTheWeek,localtime);
-
-        //(Its going to be execute in five seconds)
-        //val triggerTime = System.currentTimeMillis() + 5000;
 
         val requestCode = generateRequestCode(dayOfTheWeek, localtime, title);
 
