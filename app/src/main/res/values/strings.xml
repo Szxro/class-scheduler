@@ -13,6 +13,11 @@
     <string name="profile_picture">Profile Picture</string>
     <string name="default_profile_picture">Default Profile Picture</string>
     <string name="unknown_email">Unknown Email</string>
+    <string name="class_created">CLASS CREATED!!!</string>
+    <string name="class_deleted">CLASS DELETED!!!</string>
+    <string name="class_updated">CLASS UPDATED!!!</string>
+    <string name="alarm_configured">ALARM CONFIGURED!!!</string>
+    <string name="alarm_cancel">ALARM CANCEL!!!</string>
 
     <!--Button descriptions-->
     <string name="sign_in_action">Sign In</string>
@@ -60,7 +65,7 @@
     <string name="create_class_title">Create Class</string>
     <string name="delete_class_title">Delete Class</string>
     <string name="update_class_title">Update Class</string>
-    <string name="configure_class_title">Configure Class</string>
+    <string name="configure_class_title">Configure Alarm</string>
 
     <!--Firebase Exception descriptions-->
     <string name="user_not_found_exception">User account not found. Please verify your credentials.</string>
