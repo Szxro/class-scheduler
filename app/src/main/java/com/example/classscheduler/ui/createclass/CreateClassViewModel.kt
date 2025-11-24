@@ -32,12 +32,6 @@ class CreateClassViewModel @Inject constructor(
         addValidator(CreateClassValidator());
     }
 
-    /**
-     * Handles incoming CreateClassIntent actions and delegates them
-     * to their corresponding handler functions.
-     *
-     * @param intent The intent representing a user action in the Create Class screen.
-     */
     override fun onIntent(intent: CreateClassIntent) {
         when (intent) {
             is CreateClassIntent.OnNameChange -> updateName(intent.name)
