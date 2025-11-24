@@ -11,6 +11,9 @@ import com.example.classscheduler.R;
 import com.example.classscheduler.core.utils.validation.guards.emptyOrNull
 import com.example.classscheduler.core.utils.validation.guards.ensureAllValid
 
+/**
+ * Validator for the [CreateClassState] screen.
+ */
 class CreateClassValidator : Validator<CreateClassState>() {
     override fun validate(value: CreateClassState): Map<String, ValidationResult> {
         validations.clear();

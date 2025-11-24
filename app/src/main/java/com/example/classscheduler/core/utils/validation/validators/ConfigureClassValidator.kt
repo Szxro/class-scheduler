@@ -8,6 +8,9 @@ import com.example.classscheduler.core.utils.validation.guards.Guard
 import com.example.classscheduler.core.utils.validation.guards.nullValue
 import com.example.classscheduler.ui.configureclass.ConfigureClassState
 
+/**
+ * Validator for the [ConfigureClassState] screen.
+ */
 class ConfigureClassValidator : Validator<ConfigureClassState>() {
     override fun validate(value: ConfigureClassState): Map<String, ValidationResult> {
         validations.clear();

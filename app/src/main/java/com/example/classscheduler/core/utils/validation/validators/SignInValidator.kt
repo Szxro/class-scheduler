@@ -11,6 +11,9 @@ import com.example.classscheduler.core.utils.validation.guards.blankOrNull
 import com.example.classscheduler.core.utils.validation.guards.pattern
 import com.example.classscheduler.ui.signin.SignInState
 
+/**
+ * Validator for the [SignInState] screen.
+ */
 class SignInValidator : Validator<SignInState>() {
     override fun validate(value: SignInState): Map<String, ValidationResult> {
         validations.clear();

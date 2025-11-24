@@ -8,6 +8,9 @@ import com.example.classscheduler.core.utils.validation.guards.Guard
 import com.example.classscheduler.core.utils.validation.guards.nullValue
 import com.example.classscheduler.ui.deleteclass.DeleteClassState
 
+/**
+ * Validator for the [DeleteClassState] screen.
+ */
 class DeleteClassValidator : Validator<DeleteClassState>() {
     override fun validate(value: DeleteClassState): Map<String, ValidationResult> {
         validations.clear();

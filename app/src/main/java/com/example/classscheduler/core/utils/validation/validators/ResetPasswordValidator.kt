@@ -11,6 +11,9 @@ import com.example.classscheduler.core.utils.validation.guards.blankOrNull
 import com.example.classscheduler.core.utils.validation.guards.pattern
 import com.example.classscheduler.ui.resetpassword.ResetPasswordState
 
+/**
+ * Validator for the [ResetPasswordState] screen.
+ */
 class ResetPasswordValidator : Validator<ResetPasswordState>() {
     override fun validate(value: ResetPasswordState): Map<String, ValidationResult> {
         validations.clear();

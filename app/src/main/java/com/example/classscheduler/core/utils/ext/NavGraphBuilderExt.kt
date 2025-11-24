@@ -28,6 +28,19 @@ import com.example.classscheduler.ui.updateclass.UpdateClassRoute
 import com.example.classscheduler.ui.updateclass.UpdateClassScreen
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * Defines all navigation destinations related to authentication flows such as
+ * sign-in, sign-up, and password reset.
+ *
+ * Each screen exposes callbacks for navigation and for displaying snackbar
+ * messages. Navigation is performed using extension helpers such as
+ * [navigateSingleTop] and [navigateWithClearStack].
+ *
+ * @param nav Controller used to perform navigation actions.
+ * @param scope Coroutine scope used to launch snackbar operations.
+ * @param context Android context required for resolving string resources.
+ * @param snackbar Host state used for showing snackbar messages.
+ */
 fun NavGraphBuilder.auth(
     nav: NavHostController,
     scope: CoroutineScope,
@@ -88,6 +101,17 @@ fun NavGraphBuilder.auth(
     }
 }
 
+/**
+ * Defines navigation destinations accessible from the home section of the app.
+ *
+ * Includes navigation into managing classes, daily schedules, and authentication
+ * redirection when needed.
+ *
+ * @param nav Navigation controller used to handle screen transitions.
+ * @param scope Coroutine scope for snackbar operations.
+ * @param context Context used for resolving UI text resources.
+ * @param snackbar Host state responsible for rendering snackbar messages.
+ */
 fun NavGraphBuilder.home(
     nav: NavHostController,
     scope: CoroutineScope,
@@ -116,6 +140,18 @@ fun NavGraphBuilder.home(
     }
 }
 
+/**
+ * Defines all navigation destinations for class management, including:
+ * creation, updating, deleting, configuration, and viewing daily schedules.
+ *
+ * Each screen receives its required callbacks for local navigation and snackbar
+ * messaging. All transitions use singleTop to avoid duplicating screens.
+ *
+ * @param nav Controller used for navigating between class-related screens.
+ * @param scope Coroutine scope used when showing snackbar messages.
+ * @param context Context used to resolve strings for snackbar messages.
+ * @param snackbar Host state controlling snackbar rendering.
+ */
 fun NavGraphBuilder.classes(
     nav: NavHostController,
     scope: CoroutineScope,

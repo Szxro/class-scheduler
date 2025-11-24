@@ -13,6 +13,9 @@ import com.example.classscheduler.core.utils.validation.guards.pattern
 import com.example.classscheduler.core.utils.validation.guards.stringToShort
 import com.example.classscheduler.ui.signup.SignUpState
 
+/**
+ * Validator for the [SignUpState] screen.
+ */
 class SignUpValidator : Validator<SignUpState>() {
     override fun validate(value: SignUpState): Map<String, ValidationResult> {
         validations.clear();

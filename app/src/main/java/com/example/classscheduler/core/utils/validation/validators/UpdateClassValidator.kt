@@ -12,6 +12,9 @@ import com.example.classscheduler.core.utils.validation.guards.ensureAllValid
 import com.example.classscheduler.core.utils.validation.guards.nullValue
 import com.example.classscheduler.ui.updateclass.UpdateClassState
 
+/**
+ * Validator for the [UpdateClassState] screen.
+ */
 class UpdateClassValidator : Validator<UpdateClassState>() {
     override fun validate(value: UpdateClassState): Map<String, ValidationResult> {
         validations.clear();
