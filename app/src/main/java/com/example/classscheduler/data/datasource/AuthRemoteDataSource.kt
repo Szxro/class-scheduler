@@ -29,23 +29,48 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
+/**
+ * Remote data source responsible for managing all authentication-related
+ * operations using Firebase Authentication and the Android Credential Manager.
+ *
+ * @property auth The [FirebaseAuth] instance used for all authentication operations.
+ * @property credentialManager The [CredentialManager] used to interact with local device credentials.
+ * @property credentialRequest The configuration used when requesting credentials from the user.
+ */
 class AuthRemoteDataSource @Inject constructor(
     private val auth: FirebaseAuth,
     private val credentialManager: CredentialManager,
     private val credentialRequest: GetCredentialRequest
 ) : BaseDataSource( "AuthRemoteDataSource") {
+    /**
+     * Returns the currently authenticated Firebase user, or null if no user is signed in.
+     */
     val currentUser: FirebaseUser?
         get() = auth.currentUser;
 
+    /**
+     * A [Flow] that emits the current authenticated user's UID each time the
+     * authentication state changes. Emits null when the user signs out.
+     *
+     * The flow registers a [FirebaseAuth.AuthStateListener] and removes it automatically
+     * when the flow collector is cancelled.
+     */
     val currentIdFlow : Flow<String?>
         get() = callbackFlow {
-            // Listener call when it is a change in the authentication state
-            val listener = FirebaseAuth.AuthStateListener{ _ -> this.trySend(currentUser?.uid)} // its going to send the user uid in a producer scope channel
-            auth.addAuthStateListener(listener); // register the listener in the authentication state
+            val listener = FirebaseAuth.AuthStateListener{ _ -> this.trySend(currentUser?.uid)}
+            auth.addAuthStateListener(listener);
             awaitClose { auth.removeAuthStateListener(listener) }
-            // Suspends the current coroutine until the channel is either closed or cancelled.
         }
 
+    /**
+     * Attempts to sign in a user with email and password.
+     *
+     * - Returns [Result.Success] if authentication succeeds and the email is verified.
+     * - Returns [Result.Failure] with a specific [AuthError] on failure.
+     *
+     * @param email The user's email address.
+     * @param password The user's password.
+     */
     suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Nothing> {
         return try {
             auth.signInWithEmailAndPassword(email, password).await();
@@ -67,6 +92,12 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Attempts to sign in the user using Google Sign-In through Credential Manager.
+     *
+     * @param context The current application context.
+     * @return A [Result] representing success or a specific authentication error.
+     */
     suspend fun signInWithGoogle(context: Context): Result<Nothing>{
         return try {
             // Request a credential from the user
@@ -96,10 +127,17 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Creates a new user account using email and password and sends
+     * a verification email to the newly created user.
+     *
+     * @param email The email used to create the account.
+     * @param password The password chosen by the user.
+     */
     suspend fun signUpWithEmailAndPassword(email: String, password: String): Result<Nothing> {
         return try {
             // Create the user
-            val authResult = auth.createUserWithEmailAndPassword(email,password).await();
+            auth.createUserWithEmailAndPassword(email,password).await();
 
             // With the current user send a verification email
             currentUser?.sendEmailVerification()?.await();
@@ -116,6 +154,11 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Sends a password reset email to the specified address.
+     *
+     * @param email The user's email address.
+     */
     suspend fun resetPassword(email: String): Result<Nothing>{
         return try {
             auth.sendPasswordResetEmail(email).await();
@@ -132,6 +175,12 @@ class AuthRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Signs out the current user from Firebase Authentication and clears
+     * any stored credential state from Credential Manager.
+     *
+     * @return A [Result] indicating success or failure.
+     */
     suspend fun signOut(): Result<Nothing> {
         return try {
             // Firebase Sign out

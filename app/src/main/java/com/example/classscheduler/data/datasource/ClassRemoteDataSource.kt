@@ -11,10 +11,23 @@ import com.example.classscheduler.domain.primitives.Result;
 import com.google.firebase.firestore.toObjects
 import javax.inject.Inject
 
+/**
+ * Remote data source responsible for interacting with the Firestore database
+ * to perform CRUD operations on [Class] entity.
+ *
+ * @property firestore The [FirebaseFirestore] instance used for database operations.
+ */
 class ClassRemoteDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ): BaseDataSource("ClassRemoteDataSource") {
 
+    /**
+     * Creates a new class document in Firestore.
+     *
+     * @param newClass The class entity to be created.
+     * @return [Result.Success] if the class is successfully created,
+     *         or [Result.Failure] if any Firestore error occurs.
+     */
     suspend fun create(newClass: Class): Result<Nothing> {
         return try {
             firestore
@@ -34,6 +47,14 @@ class ClassRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Updates an existing class document in Firestore.
+     *
+     * The class is identified by its `id` property.
+     *
+     * @param updatedClass The updated class data to be stored.
+     * @return A [Result] representing either success or failure.
+     */
     suspend fun update(updatedClass: Class):Result<Nothing>{
         return try {
             firestore
@@ -54,6 +75,12 @@ class ClassRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Deletes a class document from Firestore.
+     *
+     * @param classId The ID of the class to delete.
+     * @return A [Result] indicating whether the deletion succeeded or failed.
+     */
     suspend fun delete(classId: String): Result<Nothing> {
         return try {
             firestore
@@ -74,6 +101,15 @@ class ClassRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves all classes that:
+     *  - Belong to a given owner, and
+     *  - Contain the specified day in their `scheduleDays` array.
+     *
+     * @param day The day to match in the schedule.
+     * @param ownerId The ID of the user who owns the classes.
+     * @return A [Result] containing a list of classes or a failure error.
+     */
     suspend fun getClassesByDay(day: String, ownerId:String): Result<List<Class>> {
         return try {
             val classes = firestore.collection(CLASSES_COLLECTION)
@@ -95,6 +131,12 @@ class ClassRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves all classes owned by the specified user.
+     *
+     * @param ownerId The ID of the user who owns the classes.
+     * @return A [Result] containing all classes for this owner.
+     */
     suspend fun getClassesByOwnerId(ownerId: String): Result<List<Class>>{
         return try {
             val classes = firestore.collection(CLASSES_COLLECTION)
@@ -115,6 +157,13 @@ class ClassRemoteDataSource @Inject constructor(
         }
     }
 
+    /**
+     * Retrieves all classes owned by a user that have *not* been configured yet.
+     * A class is considered unconfigured when its `configured` field is false.
+     *
+     * @param ownerId The ID of the class owner.
+     * @return A [Result] containing a list of unconfigured classes.
+     */
     suspend fun getUnconfiguredClassesByOwnerId(ownerId: String):Result<List<Class>>{
         return  try {
             val classes = firestore.collection(CLASSES_COLLECTION)
