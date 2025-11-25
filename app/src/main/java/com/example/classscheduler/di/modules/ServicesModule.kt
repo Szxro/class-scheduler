@@ -11,9 +11,22 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
+/**
+ * Hilt module responsible for providing application-wide service
+ * implementations such as alarm scheduling and notifications.
+ *
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object ServicesModule {
+
+    /**
+     * Provides an implementation of [AlarmSchedulerService] capable of
+     * creating and canceling weekly scheduled alarms using [android.app.AlarmManager].
+     *
+     * @param context The application context used for system service access.
+     * @return The concrete [AlarmSchedulerService] implementation.
+     */
     @Provides
     fun alarmScheduler(
         @ApplicationContext context: Context
@@ -21,6 +34,14 @@ object ServicesModule {
         return AlarmSchedulerServiceImpl(context);
     };
 
+
+    /**
+     * Provides an implementation of [NotificationService] used to display
+     * system notifications for scheduled class reminders.
+     *
+     * @param context The application context required for NotificationManager operations.
+     * @return The concrete [NotificationService] implementation.
+     */
     @Provides
     fun notificationService(
         @ApplicationContext context: Context

@@ -11,10 +11,21 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
+/**
+ * Hilt module that provides the necessary Google Identity and Credential Manager
+ * components used for Google Sign-In authentication.
+ *
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object GoogleAuthHiltModule {
 
+    /**
+     * Provides a configured [GetGoogleIdOption] used to request Google ID tokens
+     * during the authentication process.
+     *
+     * @return The configured [GetGoogleIdOption] instance.
+     */
     @Provides
     fun googleIdOption(): GetGoogleIdOption{
         return GetGoogleIdOption.Builder()
@@ -23,6 +34,12 @@ object GoogleAuthHiltModule {
             .build();
     }
 
+    /**
+     * Provides a [GetCredentialRequest] that wraps the Google ID credential option.
+     *
+     * @param googleIdOption The Google ID credential option to include in the request.
+     * @return A fully built [GetCredentialRequest] instance.
+     */
     @Provides
     fun credentialsRequest(
         googleIdOption: GetGoogleIdOption
@@ -32,6 +49,13 @@ object GoogleAuthHiltModule {
             build();
     }
 
+    /**
+     * Provides a [CredentialManager] instance used to interact with the
+     * system Credential Management API.
+     *
+     * @param context The application context.
+     * @return A [CredentialManager] bound to the application context.
+     */
     @Provides
     fun credentialManager(
         @ApplicationContext context: Context
