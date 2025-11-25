@@ -5,6 +5,10 @@ import com.example.classscheduler.domain.primitives.Result
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Defines the contract for all authentication-related operations in the app.
+ *
+ */
 interface AuthRepository {
     val currentUser: FirebaseUser?
     val currentIdFlow: Flow<String?>

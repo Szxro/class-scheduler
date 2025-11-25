@@ -3,6 +3,10 @@ package com.example.classscheduler.domain.interfaces
 import com.example.classscheduler.domain.models.Class
 import com.example.classscheduler.domain.primitives.Result
 
+/**
+ * Defines the contract for handling Class-related data operations.
+ *
+ */
 interface ClassRepository {
 
     suspend fun create(newClass: Class): Result<Nothing>;
