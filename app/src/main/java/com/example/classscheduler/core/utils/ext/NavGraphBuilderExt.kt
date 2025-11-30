@@ -73,7 +73,7 @@ fun NavGraphBuilder.auth(
                 nav.navigateWithClearStack(HomeRoute);
             },
             openSignInScreen = {
-                nav.navigateSingleTop(SignUpRoute);
+                nav.navigateSingleTop(SignInRoute);
             },
             showSnackBar = { text ->
                 snackbar.showMessage(
@@ -87,7 +87,7 @@ fun NavGraphBuilder.auth(
     composable<ResetPasswordRoute> {
         ResetPasswordScreen(
             openSignInScreen = {
-                nav.navigateSingleTop(SignUpRoute);
+                nav.navigateSingleTop(SignInRoute);
             },
             showSnackBar = { text ->
                 snackbar.showMessage(
