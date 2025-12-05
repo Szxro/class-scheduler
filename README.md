@@ -16,11 +16,17 @@ The app provides a structured way for students to:
 
 ## Screenshots
 
-### 🏠 Home
-<img src="assets/Home.png" width="1080" alt="Home"/>
+<p align="center">
+  <img src="assets/Home.png" width="250" alt="Home"/>
+  <img src="assets/Filter.png" width="250" alt="Class details"/>
+  <img src="assets/Create-class-form.png" width="250" alt="Class details"/>
+</p>
 
-### 📖 Class Details
-<img src="assets/Filter.png" width="1080" alt="Class details"/>
+<p align="center">
+  <img src="assets/Manage-class.png" width="250" alt="Manage class"/>
+  <img src="assets/Reset-password.png" width="250" alt="Reset password"/>
+  <img src="assets/Sign-in.png" width="250" alt="Sign In"/>
+</p>
 
 ---
 
