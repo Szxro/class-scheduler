@@ -14,6 +14,16 @@ The app provides a structured way for students to:
 * Sync their schedule through Firebase
 ---
 
+## Screenshots
+
+### 🏠 Home
+<img src="assets/Home.png" width="1080" alt="Home"/>
+
+### 📖 Class Details
+<img src="assets/Filter.png" width="1080" alt="Class details"/>
+
+---
+
 ## 🎉 Features
 
 ### 🧭 Onboarding Experience
@@ -74,7 +84,7 @@ The app integrates with **Firebase Authentication** for secure logins and **Fire
 ### 1. Clone the repository
 
 ```bash
-git clone git@github.com:Szxro/Class-Scheduler.git
+git clone https://github.com/Szxro/class-scheduler.git
 ```
 
 ### 2. Open the project in Android Studio
